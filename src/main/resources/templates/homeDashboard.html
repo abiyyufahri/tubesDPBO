@@ -74,7 +74,7 @@
                 <span class="material-icons-outlined text-2xl">menu</span>
             </button>
             <div class="text-xl font-bold text-blue-900">
-                Diservis
+                Diservis 
             </div>
             <div class="flex items-center space-x-2">
                 <span
@@ -83,6 +83,9 @@
                     class="material-icons-outlined p-2 text-2xl cursor-pointer hover:text-indigo-800 transition-transform duration-300 hover:scale-110 hidden md:block">notifications</span>
                 <img class="w-10 h-10 rounded-full transition-transform duration-300 hover:scale-110 object-cover"
                     src="https://i.pinimg.com/564x/de/0f/3d/de0f3d06d2c6dbf29a888cf78e4c0323.jpg" alt="Profile">
+                <span class="p-2" th:text="${session.loggedUser.username}">
+                    Haloo
+                </span>
             </div>
         </div>
     </header>
@@ -126,7 +129,7 @@
                     Settings
                     <span class="material-icons-outlined ml-auto">keyboard_arrow_right</span>
                 </a>
-                <a href="#"
+                <a th:href="@{/logout}"
                     class="flex items-center text-gray-600 hover:text-indigo-800 py-4 transition-all duration-300 hover:translate-x-1">
                     <span class="material-icons-outlined mr-2">power_settings_new</span>
                     Log out

@@ -1,38 +1,60 @@
 package com.springboot.tubespbo.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.stereotype.Service;
 
 import com.springboot.tubespbo.auditable.User;
+import com.springboot.tubespbo.controller.AlertController;
+import com.springboot.tubespbo.model.Customer;
+import com.springboot.tubespbo.repository.CustomerRepository;
 import com.springboot.tubespbo.repository.UserRepository;
 
-import java.util.List;
+import java.sql.Date;
+import java.time.LocalDate;
+import java.util.Optional;
 
 @Service
 public class UserService {
 
-    @Autowired
-    private UserRepository userRepository;
+    private final UserRepository customerRepository;
 
-    public User createUser(User user) {
-        return userRepository.save(user);
+    public UserService(UserRepository customerRepository) {
+        this.customerRepository = customerRepository;
     }
 
-    public List<User> getAllUsers() {
-        return userRepository.findAll();
+    
+    public User register(String username, String email, String rawPassword, String noTelpon, String jenisKelamin, LocalDate tanggalLahir) {
+        if (customerRepository.existsByUsername(username)) {
+            throw new RuntimeException("Username already exists");
+        }
+
+        if (customerRepository.existsByEmail(email)) {
+            throw new RuntimeException("Email already exists");
+        }
+
+        Customer user = new Customer(username, rawPassword, email, noTelpon, jenisKelamin, true, tanggalLahir);
+        user.setUsername(username);
+        user.setEmail(email);
+        user.setPassword(rawPassword); 
+
+        return customerRepository.save(user);
     }
 
-    public User getUserById(Long id) {
-        return userRepository.findById(id).orElse(null);
-    }
+    
+    public User login(String email, String rawPassword) {
+        Optional<User> userOptional = customerRepository.findByEmail(email);
 
-    public User updateUser(Long id, User user) {
-     //   user.setId(id);
-        return userRepository.save(user);
-    }
+        if (userOptional.isEmpty()) {
+            throw new RuntimeException("User not found");
+        }
 
-    public void deleteUser(Long id) {
-        userRepository.deleteById(id);
+        User user = userOptional.get();
+
+        if (!rawPassword.equals(user.getPassword())) {
+            return null;
+            // throw new RuntimeException("Invalid password");
+        }
+        // System.out.println("AAA : "+rawPassword.equals(user.getPassword()));
+        return user;
     }
 }
-

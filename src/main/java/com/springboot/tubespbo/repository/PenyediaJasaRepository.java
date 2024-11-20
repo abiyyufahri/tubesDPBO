@@ -9,5 +9,5 @@ import com.springboot.tubespbo.model.PenyediaJasa;
 
 @Repository
 public interface PenyediaJasaRepository extends JpaRepository<PenyediaJasa, Long> {
-    Optional<PenyediaJasa> findByUsername(String username);
+    // Optional<PenyediaJasa> findByUsername(String username);
 }
