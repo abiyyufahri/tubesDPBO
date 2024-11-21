@@ -1,7 +1,13 @@
 package com.springboot.tubespbo.model;
 
-import com.springboot.tubespbo.auditable.User;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -12,9 +18,7 @@ import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 
 @Entity
-
 @Table(name = "temp_chat_rooms")
-
 public class TempChatRoom {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -22,37 +26,32 @@ public class TempChatRoom {
 
     @NotNull
     @OneToOne
-    private User pengguna1;
+    private User sender;
 
     @NotNull
     @OneToOne
-    private User pengguna2;
+    private User receiver;
 
-    @OneToOne
-    private ChatMessage chatMessage;
+    @OneToMany(mappedBy = "tempChatRoom", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ChatMessage> chatMessages = new ArrayList<>();
 
-    public void addMessage(ChatMessage message){
-        setChatMessage(message);
+    @CreationTimestamp
+    private LocalDateTime createdAt;
+
+    @UpdateTimestamp
+    private LocalDateTime updatedAt;
+
+    @NotNull
+    private String status;
+
+    public void addMessage(ChatMessage message) {
+        this.chatMessages.add(message);
+        message.setTempChatRoom(this);
     }
 
-    public ChatMessage displayChatMessage(){
-        return this.chatMessage;
+    public List<ChatMessage> getChatMessages() {
+        return this.chatMessages;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public void setPengguna1(User pengguna1) {
-        this.pengguna1 = pengguna1;
-    }
-
-    public void setPengguna2(User pengguna2) {
-        this.pengguna2 = pengguna2;
-    }
-
-    public void setChatMessage(ChatMessage chatMessage) {
-        this.chatMessage = chatMessage;
-    }    
-
+    // Getters and Setters
 }

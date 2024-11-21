@@ -3,10 +3,10 @@ package com.springboot.tubespbo.service;
 
 import org.springframework.stereotype.Service;
 
-import com.springboot.tubespbo.auditable.User;
 import com.springboot.tubespbo.controller.AlertController;
 import com.springboot.tubespbo.model.Customer;
 import com.springboot.tubespbo.model.PenyediaJasa;
+import com.springboot.tubespbo.model.User;
 import com.springboot.tubespbo.repository.CustomerRepository;
 import com.springboot.tubespbo.repository.UserRepository;
 
@@ -48,7 +48,8 @@ public class UserService {
         Optional<User> userOptional = customerRepository.findByEmail(email);
 
         if (userOptional.isEmpty()) {
-            throw new RuntimeException("User not found");
+            return null;
+            // throw new RuntimeException("User not found");
         }
 
         User user = userOptional.get();

@@ -1,11 +1,10 @@
 package com.springboot.tubespbo.model;
 
-import com.springboot.tubespbo.auditable.User;
-
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
@@ -25,6 +24,10 @@ public class ChatMessage {
     @NotBlank
     private String isiPesan;
 
+    @ManyToOne
+    private TempChatRoom tempChatRoom; 
+
+    
     public Long getId() {
         return id;
     }
@@ -35,5 +38,13 @@ public class ChatMessage {
 
     public String getIsiPesan() {
         return isiPesan;
-    } 
+    }
+
+    public TempChatRoom getTempChatRoom() {
+        return tempChatRoom;
+    }
+
+    public void setTempChatRoom(TempChatRoom tempChatRoom) {
+        this.tempChatRoom = tempChatRoom;
+    }
 }

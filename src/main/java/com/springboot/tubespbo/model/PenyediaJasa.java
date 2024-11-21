@@ -2,10 +2,11 @@ package com.springboot.tubespbo.model;
 
 import java.sql.Date;
 import java.time.LocalDate;
+import java.util.List;
 
-import com.springboot.tubespbo.auditable.User;
-
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
 @Entity
@@ -15,6 +16,9 @@ public class PenyediaJasa extends User {
     private String jenisKeahlian;
     private String statusKetersediaan;
     private int ratingPenilaian;
+
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "penyediaJasa")
+    private List<RiwayatPesanan> riwayatPesanan;
 
     public PenyediaJasa() {
     }

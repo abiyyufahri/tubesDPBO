@@ -1,4 +1,4 @@
-package com.springboot.tubespbo.auditable;
+package com.springboot.tubespbo.model;
 
 import java.sql.Date;
 import java.time.LocalDate;

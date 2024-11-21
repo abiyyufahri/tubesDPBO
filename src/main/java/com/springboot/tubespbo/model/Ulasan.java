@@ -2,10 +2,12 @@ package com.springboot.tubespbo.model;
 
 import java.time.LocalDate;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
@@ -19,8 +21,10 @@ public class Ulasan {
     private Long id;
 
     @NotNull
-    @OneToOne
-    private Pesanan pesanan;
+
+    @OneToOne(mappedBy = "ulasan")
+    private RiwayatPesanan pesanan;
+
 
     @NotBlank
     private double rating;
@@ -31,8 +35,9 @@ public class Ulasan {
     @NotNull
     private LocalDate tanggalUlasan;
    
+    public Ulasan(){}
 
-    public Ulasan(Long id, @NotNull Pesanan pesanan, @NotBlank double rating, String komentar,
+    public Ulasan(Long id, @NotNull RiwayatPesanan pesanan, @NotBlank double rating, String komentar,
             @NotNull LocalDate tanggalUlasan) {
         this.id = id;
         this.pesanan = pesanan;

@@ -26,10 +26,10 @@ public class Alamat {
     
     private String negara;
     
-    
+    public Alamat(){}
 
-    public Alamat(int idPesanan, String namaJalan, String nomorRumah, String kota, String provinsi, String kodePos,
-            String negara, String koordinat) {
+    public Alamat(String namaJalan, String nomorRumah, String kota, String provinsi, String kodePos,
+            String negara) {
         this.namaJalan = namaJalan;
         this.nomorRumah = nomorRumah;
         this.kota = kota;

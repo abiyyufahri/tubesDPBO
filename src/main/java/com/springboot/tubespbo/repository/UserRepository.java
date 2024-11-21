@@ -5,7 +5,7 @@ import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import com.springboot.tubespbo.auditable.User;
+import com.springboot.tubespbo.model.User;
 
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
