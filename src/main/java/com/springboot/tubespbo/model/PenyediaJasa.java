@@ -20,10 +20,8 @@ public class PenyediaJasa extends User {
     }
 
     public PenyediaJasa(String username, String password, String email, String noTelpon, 
-                        String jenisKelamin, boolean isActive, String jenisKeahlian, 
-                        String statusKetersediaan, int ratingPenilaian, LocalDate tanggalLahir) {
+                        String jenisKelamin, boolean isActive, LocalDate tanggalLahir) {
         super(username, password, email, noTelpon, jenisKelamin, isActive,tanggalLahir);
-        this.jenisKeahlian = jenisKeahlian;
     }
 
     

@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import com.springboot.tubespbo.auditable.User;
 import com.springboot.tubespbo.controller.AlertController;
 import com.springboot.tubespbo.model.Customer;
+import com.springboot.tubespbo.model.PenyediaJasa;
 import com.springboot.tubespbo.repository.CustomerRepository;
 import com.springboot.tubespbo.repository.UserRepository;
 
@@ -23,19 +24,21 @@ public class UserService {
     }
 
     
-    public User register(String username, String email, String rawPassword, String noTelpon, String jenisKelamin, LocalDate tanggalLahir) {
-        if (customerRepository.existsByUsername(username)) {
-            throw new RuntimeException("Username already exists");
-        }
-
+    public User register(String username, String email, String rawPassword, String noTelpon, String jenisKelamin, LocalDate tanggalLahir, String role) {
+        
         if (customerRepository.existsByEmail(email)) {
-            throw new RuntimeException("Email already exists");
+            return null;
         }
 
-        Customer user = new Customer(username, rawPassword, email, noTelpon, jenisKelamin, true, tanggalLahir);
-        user.setUsername(username);
-        user.setEmail(email);
-        user.setPassword(rawPassword); 
+        User user;
+        if(role.equals("Customer")){
+            user = new Customer(username, rawPassword, email, noTelpon, jenisKelamin, true, tanggalLahir);
+        }else{
+            user = new PenyediaJasa(username, rawPassword, email, noTelpon, jenisKelamin, true, tanggalLahir);
+        }
+        // user.setUsername(username);
+        // user.setEmail(email);
+        // user.setPassword(rawPassword); 
 
         return customerRepository.save(user);
     }
