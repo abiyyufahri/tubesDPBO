@@ -6,6 +6,7 @@ import java.time.LocalDate;
 import com.springboot.tubespbo.auditable.User;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 
 @Entity
@@ -14,6 +15,10 @@ public class Customer extends User {
     
     private String namaPesanan;
     private String riwayatPesanan;
+    
+    @OneToOne
+    private Alamat alamat;
+
 
     
     public Customer() {
