@@ -96,7 +96,7 @@ public abstract class User {
     }
 
     public void setActive(boolean active) {
-        isActive = active;
+        this.isActive = active;
     }
 
     public void setId(Long id) {

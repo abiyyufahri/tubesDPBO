@@ -36,10 +36,6 @@ public class UserService {
         }else{
             user = new PenyediaJasa(username, rawPassword, email, noTelpon, jenisKelamin, true, tanggalLahir);
         }
-        // user.setUsername(username);
-        // user.setEmail(email);
-        // user.setPassword(rawPassword); 
-
         return customerRepository.save(user);
     }
 
@@ -49,16 +45,16 @@ public class UserService {
 
         if (userOptional.isEmpty()) {
             return null;
-            // throw new RuntimeException("User not found");
+            
         }
 
         User user = userOptional.get();
 
         if (!rawPassword.equals(user.getPassword())) {
             return null;
-            // throw new RuntimeException("Invalid password");
+            
         }
-        // System.out.println("AAA : "+rawPassword.equals(user.getPassword()));
+        
         return user;
     }
 }

@@ -19,34 +19,31 @@ public class AlamatController {
     CustomerRepository customerRepository;
 
     @PostMapping("/dashboard/tambah_alamat")
-public String addAlamatToCustomer(
-        @RequestParam("namaJalan") String namaJalan,
-        @RequestParam("nomorRumah") String nomorRumah,
-        @RequestParam("kota") String kota,
-        @RequestParam("provinsi") String provinsi,
-        @RequestParam("kodePos") String kodePos, 
-        @RequestParam("negara") String negara,
-        HttpSession session
-        ) {
+    public String addAlamatToCustomer(
+            @RequestParam("namaJalan") String namaJalan,
+            @RequestParam("nomorRumah") String nomorRumah,
+            @RequestParam("kota") String kota,
+            @RequestParam("provinsi") String provinsi,
+            @RequestParam("kodePos") String kodePos,
+            @RequestParam("negara") String negara,
+            HttpSession session) {
 
-    
-    Sessiondata sessiondata = (Sessiondata) session.getAttribute("loggedUser");
-    
-    if(sessiondata != null) {
-        Customer customer = (Customer) sessiondata.getUser(); 
-        if (customer != null) {
-            Alamat alamat = new Alamat(namaJalan, nomorRumah, kota, provinsi, kodePos, negara);
-            customer.setAlamat(alamat);            
-            customerRepository.save(customer);
-            Sessiondata newSessiondata = new Sessiondata(customer, "Customer");
-            session.setAttribute("loggedUser", newSessiondata);
-        } else {
-            throw new RuntimeException("Customer not found");
+        Sessiondata sessiondata = (Sessiondata) session.getAttribute("loggedUser");
+
+        if (sessiondata != null) {
+            Customer customer = (Customer) sessiondata.getUser();
+            if (customer != null) {
+                Alamat alamat = new Alamat(namaJalan, nomorRumah, kota, provinsi, kodePos, negara);
+                customer.setAlamat(alamat);
+                customerRepository.save(customer);
+                Sessiondata newSessiondata = new Sessiondata(customer, "Customer");
+                session.setAttribute("loggedUser", newSessiondata);
+            } else {
+                throw new RuntimeException("Customer not found");
+            }
         }
+
+        return "redirect:/dashboard";
     }
-
-    return "redirect:/dashboard";
-}
-
 
 }

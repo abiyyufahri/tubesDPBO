@@ -2,6 +2,7 @@ package com.springboot.tubespbo.model;
 
 import java.util.List;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -11,6 +12,7 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 
 @Entity
 @Table(name = "pembayaran")
@@ -19,18 +21,19 @@ public class Pembayaran {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank
-    private double jumlah;
+    @NotNull
+    private int jumlah;
 
-    @OneToMany
-    private List<Voucher> voucher;
+    @OneToOne
+    @JoinColumn(name = "id_voucher")
+    private Voucher voucher;
 
-    @OneToOne(mappedBy = "pembayaran")
+    @OneToOne(cascade = CascadeType.ALL,mappedBy = "pembayaran")
     private RiwayatPesanan pesanan;
 
     public Pembayaran(){}
 
-    public Pembayaran(@NotBlank double jumlah) {
+    public Pembayaran(@NotNull int jumlah) {
         this.jumlah = jumlah;
     }
 
@@ -42,9 +45,12 @@ public class Pembayaran {
         return jumlah;
     }
 
-    public List<Voucher> getVoucher() {
+    public Voucher getVoucher() {
         return voucher;
     }
 
+    public void setVoucher(Voucher voucher) {
+        this.voucher = voucher;
+    }
     
 }

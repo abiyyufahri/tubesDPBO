@@ -113,14 +113,14 @@
                 </a>
                 <a href="#"
                     class="flex items-center text-gray-600 hover:text-indigo-800 py-4 transition-all duration-300 hover:translate-x-1">
-                    <span class="material-icons-outlined mr-2">tune</span>
-                    Some menu item
+                    <span class="material-icons-outlined mr-2">history</span>
+                    Riwayat pemesanan
                     <span class="material-icons-outlined ml-auto">keyboard_arrow_right</span>
                 </a>
                 <a href="#"
                     class="flex items-center text-gray-600 hover:text-indigo-800 py-4 transition-all duration-300 hover:translate-x-1">
-                    <span class="material-icons-outlined mr-2">file_copy</span>
-                    Another menu item
+                    <span class="material-icons-outlined mr-2">label</span>
+                    Voucher
                     <span class="material-icons-outlined ml-auto">keyboard_arrow_right</span>
                 </a>
             </div>
@@ -153,6 +153,7 @@
                 <div th:if="${session.loggedUser.role == 'Customer'}" class="flex-1 bg-white border border-indigo-200 rounded-xl p-6 animate-fade-in">
                     <div class="flex">
                         <div class="col">
+                            <a th:href="@{/dashboard/pesan_jasa/{id}(id=1)}">
                             <button class="bg-white hover:bg-gray-100 text-gray-800 font-semibold py-2 px-4">
                                 <div>
                                     <div class="justify-center align-center">
@@ -168,9 +169,11 @@
                                     </div>
                                 </div>
                             </button>
+                        </a>
                         </div>
 
                         <div class="col">
+                            <a th:href="@{/dashboard/pesan_jasa/{id}(id=2)}">
                             <button class="bg-white hover:bg-gray-100 text-gray-800 font-semibold py-2 px-4">
                                 <div>
                                     <div class="justify-center align-center">
@@ -185,9 +188,11 @@
                                     </div>
                                 </div>
                             </button>
+                        </a>
                         </div>
 
                         <div class="col">
+                            <a th:href="@{/dashboard/pesan_jasa/{id}(id=3)}">
                             <button class="bg-white hover:bg-gray-100 text-gray-800 font-semibold py-2 px-4">
                                 <div>
                                     <div class="justify-center align-center">
@@ -202,9 +207,11 @@
                                     </div>
                                 </div>
                             </button>
+                        </a>
                         </div>
 
                         <div class="col">
+                            <a th:href="@{/dashboard/pesan_jasa/{id}(id=4)}">
                             <button class="bg-white hover:bg-gray-100 text-gray-800 font-semibold py-2 px-4">
                                 <div>
                                     <div class="justify-center align-center">
@@ -219,9 +226,11 @@
                                     </div>
                                 </div>
                             </button>
+                        </a>
                         </div>
 
                         <div class="col">
+                            <a th:href="@{/dashboard/pesan_jasa/{id}(id=5)}">
                             <button class="bg-white hover:bg-gray-100 text-gray-800 font-semibold py-2 px-4">
                                 <div>
                                     <div class="justify-center align-center">
@@ -236,9 +245,11 @@
                                     </div>
                                 </div>
                             </button>
+                        </a>
                         </div>
 
                         <div class="col">
+                            <a th:href="@{/dashboard/pesan_jasa/{id}(id=6)}">
                             <button class="bg-white hover:bg-gray-100 text-gray-800 font-semibold py-2 px-4">
                                 <div>
                                     <div class="justify-center align-center">
@@ -253,26 +264,38 @@
                                     </div>
                                 </div>
                             </button>
+                        </a>
                         </div>
-
 
                     </div>
                 </div>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4">
+            <div th:if="${session.loggedUser.role == 'Customer'}" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4">
                 <div class="bg-white rounded-xl shadow-lg p-6 h-64 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl animate-slide-up"
                     style="animation-delay: 0.1s">
                     <h3 class="text-xl font-bold text-indigo-800">Sedang dipesan</h3>
-                    <div>
-
+                    <div class="mt-4">
+                        <div th:if="${!pesananAktif.isEmpty()}">
+                            <p th:text="${pesananAktif.get(0).getStatus()} == 1 ? 'Mencari penyedia' : 'Telah dipesan'" th:class="${pesananAktif.get(0).getStatus() == 1 ? 'bg-yellow-600 rounded-full w-[12vw] text-center text-white' : 'bg-green-800 rounded-full w-[12vw] text-center text-white'}">
+                            </p>
+                            <p th:text="${pesananAktif.get(0).getNamaJenisJasa()}" class="text-3xl font-bold w-2/3">
+                            </p>
+                            <p th:text="${pesananAktif.get(0).formatWaktu()}" class="font-bold w-2/3 mt-2">
+                            </p>
+                        </div>
+                        <div th:if="${pesananAktif.isEmpty()}">
+                            <h4>Sednag tidak memesan</h4>
+                        </div>
                     </div>
                 </div>
                 <div class="bg-white rounded-xl shadow-lg p-6 h-64 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl animate-slide-up"
                     style="animation-delay: 0.2s">
-                    <h3 class="text-xl font-bold text-indigo-800">Riwayat</h3>
+                    <h3 class="text-xl font-bold text-indigo-800">Chat</h3>
                 </div>
             </div>
+
+
         </main>
     </div>
 

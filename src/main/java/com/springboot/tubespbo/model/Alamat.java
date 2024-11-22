@@ -50,13 +50,37 @@ public class Alamat {
         this.negara = negara;
     }
 
+    
+
     public String getAlamatLengkap(){
-        return "Alamat\n" +
-                "Nama Jalan: " + namaJalan + "\n" +
-                "Nomor Rumah: " + nomorRumah + "\n" +
-                "Kota: " + kota + "\n" +
-                "Provinsi: " + provinsi + "\n" +
-                "Kode Pos: " + kodePos + "\n" +
-                "Negara: " + negara + "\n";
+        return "(No. "+ nomorRumah + ") " + namaJalan + ", " + kota + ", " + provinsi + ", " + negara + ", " + kodePos;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public String getNamaJalan() {
+        return namaJalan;
+    }
+
+    public String getNomorRumah() {
+        return nomorRumah;
+    }
+
+    public String getKota() {
+        return kota;
+    }
+
+    public String getProvinsi() {
+        return provinsi;
+    }
+
+    public String getKodePos() {
+        return kodePos;
+    }
+
+    public String getNegara() {
+        return negara;
     }
 }

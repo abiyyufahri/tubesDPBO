@@ -2,10 +2,12 @@ package com.springboot.tubespbo.model;
 
 import java.sql.Date;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
@@ -15,16 +17,15 @@ import jakarta.persistence.Table;
 @Table(name = "customer")
 public class Customer extends User {
     
-    private String namaPesanan;
-    // private String riwayatPesanan;
-    
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "alamat_id")
     private Alamat alamat;
 
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "customer", fetch = FetchType.EAGER)
+    private List<RiwayatPesanan> riwayatPesanan = new ArrayList<>();    
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "customer")
-    private List<RiwayatPesanan> riwayatPesanan;
+    private List<Voucher> vouchers = new ArrayList<>();
 
     
     public Customer() {
@@ -35,22 +36,17 @@ public class Customer extends User {
         super(username, password, email, noTelpon, jenisKelamin, isActive,tanggalLahir);
     }
 
-    
-    public String getNamaPesanan() {
-        return namaPesanan;
-    }
-
-    public void setNamaPesanan(String namaPesanan) {
-        this.namaPesanan = namaPesanan;
-    }
-
     public void setAlamat(Alamat alamat) {
         this.alamat = alamat;
     }
 
     public void addRiwayatPesanan(RiwayatPesanan riwayatPesanan) {
+        if (this.riwayatPesanan == null) {
+            this.riwayatPesanan = new ArrayList<>();
+        }
         this.riwayatPesanan.add(riwayatPesanan);
     }
+
 
     public Alamat getAlamat() {
         return alamat;

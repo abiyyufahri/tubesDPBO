@@ -6,12 +6,15 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotEmpty;
 
 
 @Entity
-@Table(name = "Voucher")
+@Table(name = "voucher")
 public class Voucher {
 
     @Id
@@ -33,6 +36,16 @@ public class Voucher {
     @NotEmpty
     private boolean statusAktif;
 
+    @ManyToOne
+    @JoinColumn(name = "id_customer")
+    private Customer customer;
+
+    @OneToOne(mappedBy = "voucher")
+    private Pembayaran pembayaran;
+
+    public Voucher(){
+        
+    }
     
     public Voucher(Long id, @NotEmpty String kodeVoucher, @NotEmpty double diskonPersen, @NotEmpty Date tanggalBuat,
             @NotEmpty double jumlah, @NotEmpty boolean statusAktif) {
@@ -59,4 +72,26 @@ public class Voucher {
     public String getKodeVoucher(){
         return kodeVoucher;
     }
+
+    public Long getId() {
+        return id;
+    }
+
+    public double getDiskonPersen() {
+        return diskonPersen;
+    }
+
+    public Date getTanggalBuat() {
+        return tanggalBuat;
+    }
+
+    public double getJumlah() {
+        return jumlah;
+    }
+
+    public Customer getCustomer() {
+        return customer;
+    }
+
+    
 }
