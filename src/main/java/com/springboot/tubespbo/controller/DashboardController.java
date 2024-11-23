@@ -77,12 +77,12 @@ public class DashboardController {
     @GetMapping("/dashboard/riwayat")
     public String riwayatPesanan(HttpSession session, Model model) {
         Sessiondata sessiondata = (Sessiondata) session.getAttribute("loggedUser");
-        if(sessiondata.getRole() == "Penyedia Jasa"){
-            return "redirect:/dashboard"; 
-        }
-
         if (session.getAttribute("loggedUser") == null) {
             return "redirect:/login"; 
+        }
+        
+        if(sessiondata.getRole() == "Penyedia Jasa"){
+            return "redirect:/dashboard"; 
         }
         Optional<Customer> customer = customerRepository.findById(sessiondata.getUser().getId());
         List<RiwayatPesanan> riwayatPesanans = null;
@@ -91,6 +91,25 @@ public class DashboardController {
         }
         model.addAttribute("riwayatPesanan", riwayatPesanans);
         return "riwayatDashboard"; 
+    }
+
+    @GetMapping("/dashboard/voucher")
+    public String voucher(HttpSession session, Model model) {
+        Sessiondata sessiondata = (Sessiondata) session.getAttribute("loggedUser");
+        if (session.getAttribute("loggedUser") == null) {
+            return "redirect:/login"; 
+        }
+
+        if(sessiondata.getRole() == "Penyedia Jasa"){
+            return "redirect:/dashboard"; 
+        }
+        Optional<Customer> customer = customerRepository.findById(sessiondata.getUser().getId());
+        List<Voucher> voucher = null;
+        if(customer.isPresent()){
+            voucher = voucherRepository.findByCustomerId(customer.get().getId());
+        }
+        model.addAttribute("vouchers", voucher);
+        return "voucherDashboard"; 
     }
 
 

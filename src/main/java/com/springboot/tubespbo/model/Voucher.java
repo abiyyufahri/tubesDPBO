@@ -1,6 +1,7 @@
 package com.springboot.tubespbo.model;
 
 import java.sql.Date;
+import java.time.LocalDate;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -10,7 +11,9 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 
 
 @Entity
@@ -24,17 +27,14 @@ public class Voucher {
     @NotEmpty
     private String kodeVoucher;
     
-    @NotEmpty
-    private double diskonPersen;
+    @NotNull
+    private int diskonPersen;
 
-    @NotEmpty
-    private Date tanggalBuat;
+    @NotNull
+    private LocalDate kadaluarsa;
     
-    @NotEmpty
-    private double jumlah;
-    
-    @NotEmpty
-    private boolean statusAktif;
+    @NotNull
+    private boolean statusAktif = true;
 
     @ManyToOne
     @JoinColumn(name = "id_customer")
@@ -47,51 +47,50 @@ public class Voucher {
         
     }
     
-    public Voucher(Long id, @NotEmpty String kodeVoucher, @NotEmpty double diskonPersen, @NotEmpty Date tanggalBuat,
-            @NotEmpty double jumlah, @NotEmpty boolean statusAktif) {
-        this.id = id;
+    public Voucher(@NotEmpty String kodeVoucher, @NotEmpty int diskonPersen, @NotEmpty LocalDate kadaluarsa, @NotEmpty Customer customer) {
         this.kodeVoucher = kodeVoucher;
         this.diskonPersen = diskonPersen;
-        this.tanggalBuat = tanggalBuat;
-        this.jumlah = jumlah;
-        this.statusAktif = statusAktif;
-    }
-    
-    public void aktifkanVoucher(){
-        statusAktif = true;
-    }
-    
-    public void nonaktifkanVoucher(){
-        statusAktif = false;
-    }
-    
-    public boolean isStatusAktif(){
-        return statusAktif;
-    }
-    
-    public String getKodeVoucher(){
-        return kodeVoucher;
+        this.kadaluarsa = kadaluarsa;
+        this.customer = customer;
     }
 
     public Long getId() {
         return id;
     }
 
+    public String getKodeVoucher() {
+        return kodeVoucher;
+    }
+
     public double getDiskonPersen() {
         return diskonPersen;
     }
 
-    public Date getTanggalBuat() {
-        return tanggalBuat;
+    public LocalDate getKadaluarsa() {
+        return kadaluarsa;
     }
 
-    public double getJumlah() {
-        return jumlah;
+    public boolean isStatusAktif() {
+        return statusAktif;
     }
 
     public Customer getCustomer() {
         return customer;
     }
+
+    public Pembayaran getPembayaran() {
+        return pembayaran;
+    }
+
+    public void setStatusAktif(boolean statusAktif) {
+        this.statusAktif = statusAktif;
+    }
+
+    public void setPembayaran(Pembayaran pembayaran) {
+        this.pembayaran = pembayaran;
+    }
+    
+    
 
     
 }

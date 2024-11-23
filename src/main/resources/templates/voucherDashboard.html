@@ -114,13 +114,13 @@
                     <span class="material-icons-outlined ml-auto">keyboard_arrow_right</span>
                 </a>
                 <a href="/dashboard/riwayat"
-                    class="flex items-center text-indigo-800 hover:text-indigo-800 py-4 transition-all duration-300 hover:translate-x-1">
+                    class="flex items-center text-gray-600 hover:text-indigo-800 py-4 transition-all duration-300 hover:translate-x-1">
                     <span class="material-icons-outlined mr-2">history</span>
                     Riwayat pemesanan
                     <span class="material-icons-outlined ml-auto">keyboard_arrow_right</span>
                 </a>
                 <a href="/dashboard/voucher"
-                    class="flex items-center text-gray-600 hover:text-indigo-800 py-4 transition-all duration-300 hover:translate-x-1">
+                    class="flex items-center text-indigo-800 hover:text-indigo-800 py-4 transition-all duration-300 hover:translate-x-1">
                     <span class="material-icons-outlined mr-2">label</span>
                     Voucher
                     <span class="material-icons-outlined ml-auto">keyboard_arrow_right</span>
@@ -156,55 +156,39 @@
                     class="flex-1 bg-white border border-indigo-200 rounded-xl p-6 animate-fade-in h-[78vh]">
                     <div>
                         <div>
-                            <h3 class="font-bold text-xl text-indigo-800">Riwayat pemesanan</h3>
+                            <h3 class="font-bold text-xl text-indigo-800">Voucher</h3>
                         </div>
                     </div>
 
-                    <div class="mt-4">
-                        <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
+                    <div class="flex gap-4 mt-4">
+                        <div class="col w-full relative overflow-x-auto shadow-md sm:rounded-lg">
                             <div class="max-h-80 overflow-y-auto">
                                 <table th:if="${session.loggedUser.role == 'Customer'}" class="w-full text-sm text-left rtl:text-right text-gray-500">
                                     <thead class="text-xs text-gray-700 uppercase bg-gray-50">
                                         <tr>
                                             <th scope="col" class="px-6 py-3">
-                                                Jenis jasa
+                                                Kode voucher
                                             </th>
                                             <th scope="col" class="px-6 py-3">
-                                                Status
+                                                Potongan
                                             </th>
                                             <th scope="col" class="px-6 py-3">
-                                                Biaya
+                                                Tanggal buat
                                             </th>
                                             <th scope="col" class="px-6 py-3">
-                                                Waktu jasa
-                                            </th>
-                                            <th scope="col" class="px-6 py-3">
-                                                Action
+                                                Ketersediaan
                                             </th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <tr th:each="riwayat : ${riwayatPesanan}" class="odd:bg-white even:bg-gray-50 border-b">
-                                            <th th:text="${riwayat.getNamaJenisJasa()}" scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
+                                        <tr th:if="${vouchers != null}" th:each="voucher : ${vouchers}" class="odd:bg-white even:bg-gray-50 border-b">
+                                            <th th:text="${voucher.getKodeVoucher()}" scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
                                             </th>
-                                            <td class="px-6 py-4">
-                                                <p th:text="
-                                                ${riwayat.getStatus() == 1 ? 'Mencari penyedia' 
-                                                : riwayat.getStatus() == 2 ? 'Diterima' 
-                                                : riwayat.getStatus() == 10 ? 'Selesai' 
-                                                : 'Dibatalkan'}"  th:class="${riwayat.getStatus() == 1 ? 'bg-yellow-600 rounded-full text-center text-white' 
-                                                : riwayat.getStatus() == 2 ? 'bg-blue-600 rounded-full text-center text-white' 
-                                                : riwayat.getStatus() == 10 ? 'bg-green-600 rounded-full text-center text-white' 
-                                                : riwayat.getStatus() == 11 ? 'bg-red-600 rounded-full text-center text-white' 
-                                                : 'bg-gray-600 rounded-full text-center text-white'}">
-                                                </p>
+                                            <td th:text="${voucher.getDiskonPersen()}" class="px-6 py-4">
                                             </td>
-                                            <td th:text="${riwayat.getPembayaran().getJumlahInIDR()}" class="px-6 py-4">
+                                            <td th:text="${voucher.getKadaluarsa()}" class="px-6 py-4">
                                             </td>
-                                            <td th:text="${riwayat.formatWaktu()}" class="px-6 py-4">
-                                            </td>
-                                            <td class="px-6 py-4">
-                                                <a href="#" class="font-medium text-blue-600 hover:underline">Edit</a>
+                                            <td th:text="${voucher.isStatusAktif()}" class="px-6 py-4">
                                             </td>
                                         </tr>
                                         <!-- Tambahkan lebih banyak baris di sini -->
@@ -212,7 +196,37 @@
                                 </table>
                             </div>
                         </div>
-                        
+                        <div class="col w-1/2 shadow-md sm:rounded-lg p-6">
+                            <form th:action="@{/dashboard/voucher/tambah_voucher}" method="post">
+                                <div class="grid gap-4 mb-4">
+                                    <div class="col-span-2">
+                                        <label for="name"
+                                            class="block mb-2 text-sm font-medium text-gray-900 text-blue-600">Kode voucher</label>
+                                        <input type="text" name="kode" id="name"
+                                            class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 text-blue-600 dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                                            placeholder="Type product name" required="">
+                                    </div>
+                                    <div class="col-span-2">
+                                        <label for="name"
+                                            class="block mb-2 text-sm font-medium text-gray-900 text-blue-600">Potongan</label>
+                                        <input type="number" name="potongan" id="name"
+                                            class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 text-blue-600 dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                                            placeholder="Type product name" required="">
+                                    </div>
+                                    <div class="col-span-2">
+                                        <label for="name"
+                                            class="block mb-2 text-sm font-medium text-gray-900 text-blue-600">Tanggal kadaluarsa</label>
+                                        <input type="date" name="kadaluarsa" id="name"
+                                            class="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 text-blue-600 dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                                            placeholder="Type product name" required="">
+                                    </div>
+                                </div>
+                                <button type="submit"
+                                    class="text-white inline-flex items-center bg-indigo-900 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center ">
+                                    Tambah voucher
+                                </button>
+                            </form>
+                        </div>
                     </div>
                 </div>
             </div>

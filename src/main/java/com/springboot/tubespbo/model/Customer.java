@@ -24,7 +24,7 @@ public class Customer extends User {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "customer", fetch = FetchType.EAGER)
     private List<RiwayatPesanan> riwayatPesanan = new ArrayList<>();    
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "customer")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "customer", fetch = FetchType.EAGER)
     private List<Voucher> vouchers = new ArrayList<>();
 
     
@@ -45,6 +45,13 @@ public class Customer extends User {
             this.riwayatPesanan = new ArrayList<>();
         }
         this.riwayatPesanan.add(riwayatPesanan);
+    }
+
+    public void addVoucher(Voucher voucher) {
+        if (this.vouchers == null) {
+            this.vouchers = new ArrayList<>();
+        }
+        this.vouchers.add(voucher);
     }
 
 

@@ -2,6 +2,8 @@ package com.springboot.tubespbo.model;
 
 import java.util.List;
 
+import com.springboot.tubespbo.util.CurrencyConverter;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -42,6 +44,10 @@ public class Pembayaran {
     }
 
     public double getJumlah() {
+        if(voucher != null){
+            return jumlah - (jumlah * (voucher.getDiskonPersen()/100));
+        }
+        System.out.println("HALO");
         return jumlah;
     }
 
@@ -51,6 +57,10 @@ public class Pembayaran {
 
     public void setVoucher(Voucher voucher) {
         this.voucher = voucher;
+    }
+
+    public String getJumlahInIDR() {
+        return CurrencyConverter.toIDR(getJumlah());
     }
     
 }

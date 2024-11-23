@@ -243,7 +243,7 @@
                                     <select id="role" name="idVoucher"
                                         class="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
                                         <option value="0">Pilih Voucher</option>
-                                        <option th:if="${voucher != null && !voucher.isEmpty()}" th:each="voucher : ${voucher}" th:value="${voucher.getId()}"
+                                        <option th:if="${voucher != null}" th:each="voucher : ${voucher}" th:value="${voucher.getId()}"
                                             th:text="'Kode: ' + ${voucher.getKodeVoucher()} + ', ' + ${voucher.getDiskonPersen()} + '% Diskon'">
                                         </option>
                                     </select>

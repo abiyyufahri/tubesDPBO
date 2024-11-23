@@ -58,7 +58,7 @@ public class RiwayatPesananController {
         Customer customer = (Customer) sessiondata.getUser();
         Pembayaran pembayaran = new Pembayaran(harga * kuantitas);
         Optional<Voucher> voucher = null;
-        if(idVoucher.equals("0")){
+        if(!idVoucher.equals("0")){
             voucher = voucherRepository.findById(Long.parseLong(idVoucher));
         }
         if(voucher != null && voucher.isPresent()){
