@@ -56,6 +56,13 @@ public class RiwayatPesananController {
             return "redirect:/login";
         }
         Customer customer = (Customer) sessiondata.getUser();
+
+        RiwayatPesanan sedangMemesan = riwayatPesananRepository.findBySedangMemesan( customer.getId());
+        if (sedangMemesan != null && !jenisJasa.equals("0")) {
+            redirAttrs.addFlashAttribute("message", "Ada pesanan yang sedang berjalan");
+            return "redirect:/dashboard/pesan_jasa/" + jenisJasa;
+        }
+
         Pembayaran pembayaran = new Pembayaran(harga * kuantitas);
         Optional<Voucher> voucher = null;
         if(!idVoucher.equals("0")){
