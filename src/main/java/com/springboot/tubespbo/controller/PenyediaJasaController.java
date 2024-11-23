@@ -35,9 +35,14 @@ public class PenyediaJasaController {
             HttpSession session,
             Model model) {
                 Sessiondata sessiondata = (Sessiondata) session.getAttribute("loggedUser");
+                
+                if (sessiondata == null) {
+                    return "redirect:/login";
+                }
+                
                 PenyediaJasa penyediaJasa = (PenyediaJasa) sessiondata.getUser();
 
-                if (penyediaJasa!=null) {
+                if (penyediaJasa!=null && !keahlian.equals("0")) {
                     penyediaJasa.setJenisKeahlian(keahlian);
                     penyediaJasaRepository.save(penyediaJasa);
                     Sessiondata newSessiondata = new Sessiondata(penyediaJasa, "Penyedia Jasa");

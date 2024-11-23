@@ -1,7 +1,9 @@
 package com.springboot.tubespbo.model;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -22,9 +24,8 @@ public class Ulasan {
 
     @NotNull
 
-    @OneToOne(mappedBy = "ulasan")
+    @OneToOne(mappedBy = "ulasan", cascade = CascadeType.ALL)
     private RiwayatPesanan pesanan;
-
 
     @NotBlank
     private double rating;
@@ -33,17 +34,17 @@ public class Ulasan {
     private String komentar;
     
     @NotNull
-    private LocalDate tanggalUlasan;
+    private LocalDateTime createdAt;
    
     public Ulasan(){}
 
     public Ulasan(Long id, @NotNull RiwayatPesanan pesanan, @NotBlank double rating, String komentar,
-            @NotNull LocalDate tanggalUlasan) {
+            @NotNull LocalDateTime createdAt) {
         this.id = id;
         this.pesanan = pesanan;
         this.rating = rating;
         this.komentar = komentar;
-        this.tanggalUlasan = tanggalUlasan;
+        this.createdAt = LocalDateTime.now();
     }
 
     public void setRating(double rating) {

@@ -2,8 +2,13 @@ package com.springboot.tubespbo.model;
 
 import java.sql.Date;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -34,14 +39,18 @@ public class Voucher {
     private LocalDate kadaluarsa;
     
     @NotNull
-    private boolean statusAktif = true;
+    @Column(name = "status_aktif")
+    private boolean statusAktif;
 
     @ManyToOne
     @JoinColumn(name = "id_customer")
     private Customer customer;
 
-    @OneToOne(mappedBy = "voucher")
+    @OneToOne(mappedBy = "voucher", cascade = CascadeType.ALL,  fetch = FetchType.EAGER)
     private Pembayaran pembayaran;
+
+    @NotNull
+    private LocalDateTime createdAt;
 
     public Voucher(){
         
@@ -52,6 +61,8 @@ public class Voucher {
         this.diskonPersen = diskonPersen;
         this.kadaluarsa = kadaluarsa;
         this.customer = customer;
+        this.statusAktif = true;
+        this.createdAt = LocalDateTime.now();
     }
 
     public Long getId() {
@@ -89,8 +100,43 @@ public class Voucher {
     public void setPembayaran(Pembayaran pembayaran) {
         this.pembayaran = pembayaran;
     }
+
+    public void setKodeVoucher(String kodeVoucher) {
+        this.kodeVoucher = kodeVoucher;
+    }
+
+    public void setDiskonPersen(int diskonPersen) {
+        this.diskonPersen = diskonPersen;
+    }
+
+    public void setKadaluarsa(LocalDate kadaluarsa) {
+        this.kadaluarsa = kadaluarsa;
+    }
+
+    public void setCustomer(Customer customer) {
+        this.customer = customer;
+    }
+
     
     
+    public String getFormattedKadaluarsa() {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+        return kadaluarsa.format(formatter);
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public boolean isKadaluarsa(){
+        if(kadaluarsa.isAfter(LocalDate.now())){
+            return false;
+        }else if (kadaluarsa.isEqual(LocalDate.now())) {
+            return false;
+        }else{
+            return true;
+        }
+    }
 
     
 }

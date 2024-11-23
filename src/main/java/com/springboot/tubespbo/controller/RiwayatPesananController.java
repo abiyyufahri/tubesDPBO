@@ -19,6 +19,7 @@ import com.springboot.tubespbo.model.RiwayatPesanan;
 import com.springboot.tubespbo.model.User;
 import com.springboot.tubespbo.model.Voucher;
 import com.springboot.tubespbo.repository.CustomerRepository;
+import com.springboot.tubespbo.repository.PembayaranRepository;
 import com.springboot.tubespbo.repository.PenyediaJasaRepository;
 import com.springboot.tubespbo.repository.RiwayatPesananRepository;
 import com.springboot.tubespbo.repository.VoucherRepository;
@@ -40,6 +41,9 @@ public class RiwayatPesananController {
     @Autowired
     PenyediaJasaRepository penyediaJasaRepository;
 
+    @Autowired
+    PembayaranRepository pembayaranRepository;
+
     @PostMapping("/dashboard/pesan_jasa/submit")
     public String pesanJasa(
             @RequestParam("jenisJasa") String jenisJasa,
@@ -50,30 +54,59 @@ public class RiwayatPesananController {
             HttpSession session,
             RedirectAttributes redirAttrs,
             Model model) {
-        Sessiondata sessiondata;
-        sessiondata = (Sessiondata) session.getAttribute("loggedUser");
+        
+        Sessiondata sessiondata = (Sessiondata) session.getAttribute("loggedUser");
         if (sessiondata == null) {
             return "redirect:/login";
         }
         Customer customer = (Customer) sessiondata.getUser();
-
-        RiwayatPesanan sedangMemesan = riwayatPesananRepository.findBySedangMemesan( customer.getId());
+        System.out.println("hooooooooo");
+        
+        RiwayatPesanan sedangMemesan = riwayatPesananRepository.findBySedangMemesan(customer.getId());
         if (sedangMemesan != null && !jenisJasa.equals("0")) {
             redirAttrs.addFlashAttribute("message", "Ada pesanan yang sedang berjalan");
             return "redirect:/dashboard/pesan_jasa/" + jenisJasa;
         }
 
+        
         Pembayaran pembayaran = new Pembayaran(harga * kuantitas);
-        Optional<Voucher> voucher = null;
-        if(!idVoucher.equals("0")){
-            voucher = voucherRepository.findById(Long.parseLong(idVoucher));
+
+        
+        Optional<Voucher> voucherOptional = Optional.empty();
+        if (!idVoucher.equals("0")) {
+            voucherOptional = voucherRepository.findById(Long.parseLong(idVoucher));
         }
-        if(voucher != null && voucher.isPresent()){
-            pembayaran.setVoucher(voucher.get());
+
+        if (voucherOptional.isPresent()) {
+            Voucher voucher = voucherOptional.get();
+
+            
+            System.out.println("Voucher yang diambil: " + voucher.getKodeVoucher());
+
+            
+            if (voucher.isStatusAktif()) {
+                voucher.setStatusAktif(false); 
+                voucherRepository.save(voucher); 
+                System.out.println("Voucher status setelah update: " + voucher.isStatusAktif());
+
+                
+                pembayaran.setVoucher(voucher);
+                System.out.println(
+                        "Voucher status setelah update melalui pembayaran: " + pembayaran.getVoucher().isStatusAktif());
+            } else {
+                redirAttrs.addFlashAttribute("message", "Voucher sudah digunakan atau tidak aktif");
+                return "redirect:/dashboard/pesan_jasa/" + jenisJasa;
+            }
         }
+
+        pembayaranRepository.save(pembayaran);
+
         RiwayatPesanan riwayatPesanan = new RiwayatPesanan(jenisJasa, 1, waktu, pembayaran, customer);
-        customer.addRiwayatPesanan(riwayatPesanan);
-        customerRepository.save(customer);
+
+        riwayatPesananRepository.save(riwayatPesanan);
+
+        Sessiondata newSessiondata = new Sessiondata(customer, "Customer");
+        session.setAttribute("loggedUser", newSessiondata);
         return "redirect:/dashboard";
     }
 
@@ -118,8 +151,7 @@ public class RiwayatPesananController {
         PenyediaJasa penyediaJasa = (PenyediaJasa) sessiondata.getUser();
 
         Optional<RiwayatPesanan> pesanan = riwayatPesananRepository.findById(Long.parseLong(idPesanan));
-        
-        
+
         if (pesanan.isPresent()) {
             pesanan.get().setPenyediaJasa(penyediaJasa);
             pesanan.get().setStatus(10);

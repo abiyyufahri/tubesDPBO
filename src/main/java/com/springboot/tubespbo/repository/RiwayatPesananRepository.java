@@ -26,14 +26,10 @@ public interface RiwayatPesananRepository extends JpaRepository<RiwayatPesanan, 
 
     @Query(value = "SELECT * FROM riwayat_pesanan WHERE jenis_jasa = :jenis_jasa AND status = 1", nativeQuery = true)
     List<RiwayatPesanan> findByJenisJasa(@Param("jenis_jasa") String jenis_jasa);
+    
+
 
     // Pnyeida JAsa
     @Query(value = "SELECT * FROM riwayat_pesanan WHERE jenis_jasa = :jenis_jasa AND status = 2 AND id_penyedia_jasa = :id_penyedia_jasa", nativeQuery = true)
     RiwayatPesanan findBySedangDiambil(@Param("jenis_jasa") String jenis_jasa,@Param("id_penyedia_jasa") Long id_penyedia_jasa);
-
-
-    @Modifying
-    @Query(value = "UPDATE riwayat_pesanan SET status = :status WHERE id = :id", nativeQuery = true)
-    @Transactional
-    int updateStatus(@Param("id") Long id, @Param("status") int status);
 }

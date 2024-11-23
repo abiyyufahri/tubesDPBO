@@ -108,6 +108,7 @@ public class DashboardController {
         if(customer.isPresent()){
             voucher = voucherRepository.findByCustomerId(customer.get().getId());
         }
+        voucher.sort((d1, d2) -> d2.getCreatedAt().compareTo(d1.getCreatedAt()));
         model.addAttribute("vouchers", voucher);
         return "voucherDashboard"; 
     }
@@ -128,8 +129,12 @@ public class DashboardController {
             return "redirect:/login";
         }
 
+        if(customer.get().getAlamat() == null){
+            return "redirect:/dashboard";
+        }
+
         List<Voucher> voucher;
-        voucher = voucherRepository.findByCustomerId(customer.get().getId());
+        voucher = voucherRepository.findByCustomerIdAndStatusAktif(customer.get().getId(),true);
 
         Map<Integer, JasaDetail> jasaMap = Map.of(
             1, new JasaDetail("1","Jasa Pembersih Ruangan", 100),

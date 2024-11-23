@@ -287,8 +287,7 @@
                                         </form>
                                     </div>
                                     <div class="col">
-                                        <form th:if="${sedangDiambil != null}" th:action="@{/dashboard/selesai_jasa}"
-                                            method="post">
+                                        <form th:if="${sedangDiambil != null}" th:action="@{/dashboard/selesai_jasa}" method="post">
                                             <input hidden type="text" name="riwayat"
                                                 th:value="${sedangDiambil.getId()}">
                                             <button type="submit"

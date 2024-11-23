@@ -32,7 +32,7 @@ public class VoucherController {
     VoucherRepository voucherRepository;
 
     @PostMapping("/dashboard/voucher/tambah_voucher")
-    public String pesanJasa(
+    public String tambahVoucher(
             @RequestParam("kode") String kode,
             @RequestParam("potongan") int potongan,
             @RequestParam("kadaluarsa") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate kadaluarsa,
@@ -46,13 +46,49 @@ public class VoucherController {
         }
         Customer customer = (Customer) sessiondata.getUser();
         Voucher voucher = new Voucher(kode, potongan, kadaluarsa, customer);
-        customer.addVoucher(voucher);
         voucherRepository.save(voucher);
-        customerRepository.save(customer);
 
         Sessiondata newSessiondata = new Sessiondata(customer, "Customer");
         session.setAttribute("loggedUser", newSessiondata);
+        return "redirect:/dashboard/voucher";
+    }
 
+    @PostMapping("/dashboard/voucher/update_voucher")
+    public String updateVoucher(
+            @RequestParam("id") String id,
+            HttpSession session,
+            RedirectAttributes redirAttrs,
+            Model model) {
+        Sessiondata sessiondata;
+        sessiondata = (Sessiondata) session.getAttribute("loggedUser");
+        if (sessiondata == null) {
+            return "redirect:/login";
+        }
+        Customer customer = (Customer) sessiondata.getUser();
+        Voucher voucher = voucherRepository.findById(Long.parseLong(id)).get();
+        System.out.println(voucher.getDiskonPersen());
+        // for(Voucher v: customer.getVouchers()){
+        //     if(v.getId().equals(voucher.getId())){
+        //         v.setKodeVoucher("updated");
+        //         voucherRepository.save(v);
+        //         System.out.println(v.getKodeVoucher());
+        //         break;
+        //     }
+        // }
+
+        voucher.setKodeVoucher("kkkkk");
+        voucher.setStatusAktif(false);
+        voucherRepository.save(voucher);
+        System.out.println(voucher.getKodeVoucher());
+        
+        // customer.addVoucher(voucher);
+        // voucher.setStatusAktif(false);
+        // voucher.setKodeVoucher("upadted");
+        System.out.println("V: " + voucher.getId() + voucher.isStatusAktif());
+        // customerRepository.save(customer);
+
+        Sessiondata newSessiondata = new Sessiondata(customer, "Customer");
+        session.setAttribute("loggedUser", newSessiondata);
         return "redirect:/dashboard/voucher";
     }
 }

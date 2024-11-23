@@ -53,6 +53,9 @@ public class RiwayatPesanan {
     @JoinColumn(name = "id_ulasan")
     private Ulasan ulasan;
 
+    @NotNull
+    private LocalDateTime createdAt;
+
     public RiwayatPesanan(){}
 
     public RiwayatPesanan(@NotBlank String jenisJasa, @NotBlank int status, @NotNull LocalDateTime waktu,
@@ -62,6 +65,7 @@ public class RiwayatPesanan {
         this.waktu = waktu;
         this.pembayaran = pembayaran;
         this.customer = customer;
+        this.createdAt = LocalDateTime.now();
     }
 
 

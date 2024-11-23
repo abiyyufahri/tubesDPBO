@@ -173,7 +173,7 @@
                                                 Potongan
                                             </th>
                                             <th scope="col" class="px-6 py-3">
-                                                Tanggal buat
+                                                kadaluarsa
                                             </th>
                                             <th scope="col" class="px-6 py-3">
                                                 Ketersediaan
@@ -184,11 +184,17 @@
                                         <tr th:if="${vouchers != null}" th:each="voucher : ${vouchers}" class="odd:bg-white even:bg-gray-50 border-b">
                                             <th th:text="${voucher.getKodeVoucher()}" scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
                                             </th>
-                                            <td th:text="${voucher.getDiskonPersen()}" class="px-6 py-4">
+                                            <td th:text="${voucher.getDiskonPersen() + '%'}" class="px-6 py-4">
                                             </td>
-                                            <td th:text="${voucher.getKadaluarsa()}" class="px-6 py-4">
+                                            <td th:text="${voucher.getFormattedKadaluarsa()}" class="px-6 py-4">
                                             </td>
-                                            <td th:text="${voucher.isStatusAktif()}" class="px-6 py-4">
+                                            <td class="px-6 py-4">
+                                                <p th:if="${!voucher.isKadaluarsa()}" th:text="${voucher.isStatusAktif() ? 'Tersedia' : 'Tidak tersedia'}" th:class="${voucher.isStatusAktif() ? 'text-center bg-green-600 text-white rounded-full' : 'text-center bg-red-600 text-white rounded-full'}">
+                                                </p>
+
+                                                <p th:if="${voucher.isKadaluarsa()}" class="text-center bg-yellow-600 text-white rounded-full">
+                                                    Kadaluarsa
+                                                </p>
                                             </td>
                                         </tr>
                                         <!-- Tambahkan lebih banyak baris di sini -->

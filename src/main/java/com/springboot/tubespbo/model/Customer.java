@@ -63,5 +63,8 @@ public class Customer extends User {
         return riwayatPesanan;
     }
 
+    public List<Voucher> getVouchers() {
+        return vouchers;
+    }
     
 }
