@@ -81,15 +81,22 @@ public class DashboardController {
             return "redirect:/login"; 
         }
         
-        if(sessiondata.getRole() == "Penyedia Jasa"){
-            return "redirect:/dashboard"; 
+        if("Customer".equals(sessiondata.getRole())){
+            Optional<Customer> customer = customerRepository.findById(sessiondata.getUser().getId());
+            List<RiwayatPesanan> riwayatPesanans = null;
+            if(customer.isPresent()){
+                riwayatPesanans = riwayatPesananRepository.findByCustomerId(customer.get().getId());
+            }
+            model.addAttribute("riwayatPesanan", riwayatPesanans);
         }
-        Optional<Customer> customer = customerRepository.findById(sessiondata.getUser().getId());
-        List<RiwayatPesanan> riwayatPesanans = null;
-        if(customer.isPresent()){
-            riwayatPesanans = riwayatPesananRepository.findByCustomerId(customer.get().getId());
+        else if("Penyedia Jasa".equals(sessiondata.getRole())){
+            Optional<PenyediaJasa> penyediaJasa = penyediaJasaRepository.findById(sessiondata.getUser().getId());
+            List<RiwayatPesanan> riwayatPesanans = null;
+            if(penyediaJasa.isPresent()){
+                riwayatPesanans = riwayatPesananRepository.findByPenyediaJasaId(sessiondata.getUser().getId());
+            }
+            model.addAttribute("riwayatPesanan", riwayatPesanans);
         }
-        model.addAttribute("riwayatPesanan", riwayatPesanans);
         return "riwayatDashboard"; 
     }
 

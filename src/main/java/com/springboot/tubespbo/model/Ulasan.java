@@ -52,5 +52,19 @@ public class Ulasan {
         this.komentar = komentar;
     }
 
+    public int getRating() {
+        return rating;
+    }
+
+    public String getKomentar() {
+        return komentar;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    
+
 
 }

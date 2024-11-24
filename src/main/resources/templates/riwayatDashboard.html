@@ -80,7 +80,7 @@
                 <span class="material-icons-outlined text-2xl">menu</span>
             </button>
             <div class="text-xl font-bold text-blue-900">
-                lahDiservis
+                Diservis
             </div>
             <div class="flex items-center space-x-2">
                 <span
@@ -119,13 +119,19 @@
                     Home
                     <span class="material-icons-outlined ml-auto">keyboard_arrow_right</span>
                 </a>
-                <a href="/dashboard/riwayat"
+                <a th:if="${session.loggedUser.role == 'Customer'}" href="/dashboard/riwayat"
                     class="flex items-center text-indigo-800 hover:text-indigo-800 py-4 transition-all duration-300 hover:translate-x-1">
                     <span class="material-icons-outlined mr-2">history</span>
                     Riwayat pemesanan
                     <span class="material-icons-outlined ml-auto">keyboard_arrow_right</span>
                 </a>
-                <a href="/dashboard/voucher"
+                <a th:if="${session.loggedUser.role == 'Penyedia Jasa'}" href="/dashboard/riwayat"
+                    class="flex items-center text-indigo-800 hover:text-indigo-800 py-4 transition-all duration-300 hover:translate-x-1">
+                    <span class="material-icons-outlined mr-2">history</span>
+                    Riwayat pesanan
+                    <span class="material-icons-outlined ml-auto">keyboard_arrow_right</span>
+                </a>
+                <a th:if="${session.loggedUser.role == 'Customer'}" href="/dashboard/voucher"
                     class="flex items-center text-gray-600 hover:text-indigo-800 py-4 transition-all duration-300 hover:translate-x-1">
                     <span class="material-icons-outlined mr-2">label</span>
                     Voucher
@@ -158,11 +164,12 @@
 
         <main class="flex-1 p-4 h-full">
             <div class="flex flex-col lg:flex-row gap-4 mb-6 h-full">
-                <div th:if="${session.loggedUser.role == 'Customer'}"
+                <div
                     class="flex-1 bg-white border border-indigo-200 rounded-xl p-6 animate-fade-in h-[78vh]">
                     <div class="flex justify-between">
                         <div>
-                            <h3 class="font-bold text-xl text-indigo-800">Riwayat pemesanan</h3>
+                            <h3 th:if="${session.loggedUser.role == 'Customer'}" class="font-bold text-xl text-indigo-800">Riwayat pemesanan</h3>
+                            <h3 th:if="${session.loggedUser.role == 'Penyedia Jasa'}" class="font-bold text-xl text-indigo-800">Riwayat pesanan</h3>
                         </div>
                         <div th:if="${message}" class="bg-red-100 w-1/2 border border-red-400 text-red-700 px-4 py-2 rounded relative" role="alert">
                             <strong class="font-bold">Error:</strong>
@@ -176,7 +183,7 @@
                     <div class="mt-4">
                         <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
                             <div class="max-h-80 overflow-y-auto">
-                                <table th:if="${session.loggedUser.role == 'Customer'}"
+                                <table
                                     class="w-full text-sm text-left rtl:text-right text-gray-500">
                                     <thead class="text-xs text-gray-700 uppercase bg-gray-50">
                                         <tr>
@@ -192,8 +199,11 @@
                                             <th scope="col" class="px-6 py-3">
                                                 Waktu jasa
                                             </th>
-                                            <th scope="col" class="px-6 py-3">
+                                            <th th:if="${session.loggedUser.role == 'Customer'}" scope="col" class="px-6 py-3">
                                                 Aksi
+                                            </th>
+                                            <th th:if="${session.loggedUser.role == 'Penyedia Jasa'}" scope="col" class="px-6 py-3">
+                                                Rating
                                             </th>
                                         </tr>
                                     </thead>
@@ -221,14 +231,14 @@
                                             </td>
                                             <td class="px-6 py-4">
                                                 <button
-                                                    th:if="${riwayat.getPenyediaJasa() != null && riwayat.getStatus() == 10 && riwayat.getUlasan() == null}"
+                                                    th:if="${riwayat.getPenyediaJasa() != null && riwayat.getStatus() == 10 && riwayat.getUlasan() == null && session.loggedUser.role == 'Customer'}"
                                                     data-modal-target="crud-modal" data-modal-toggle="crud-modal"
                                                     class="block text-white bg-indigo-900 hover:bg-indigo-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
                                                     type="button">
                                                     Berikan ulasan
                                                 </button>
                                                 <button
-                                                    th:if="${riwayat.getPenyediaJasa() != null && riwayat.getStatus() == 2}"
+                                                    th:if="${riwayat.getPenyediaJasa() != null && riwayat.getStatus() == 2 && session.loggedUser.role == 'Customer'}"
                                                     class="block text-white bg-green-600 hover:bg-indigo-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
                                                     type="button">
                                                     Chat penyedia jasa
@@ -236,13 +246,66 @@
                                                 <p th:if="${riwayat.getPenyediaJasa() == null}">
                                                     Belum tersedia
                                                 </p>
+                                                <div class="flex items-center " th:if="${riwayat.getPenyediaJasa() != null && riwayat.getUlasan() != null}">
+                                                    <svg class="w-4 h-4 text-yellow-300 me-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 22 20">
+                                                        <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z"/>
+                                                    </svg>
+                                                    <p th:text="${riwayat.getUlasan().getRating()}" class="font-bold">
+
+                                                    </p>
+                                                </div>
+                                                <button data-modal-target="ulasan-modal" data-modal-toggle="ulasan-modal" class="text-indigo-900">
+                                                    Lihat ulasan
+                                                </button>
+
+                                                <div th:if="${riwayat.getUlasan() != null}" id="ulasan-modal" tabindex="-1" aria-hidden="true" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
+                                                    <div class="relative p-4 w-full max-w-md max-h-full">
+                                                        <div class="relative bg-white rounded-lg shadow">
+                                                            <div class="flex items-center justify-between p-4 md:p-5 border-b rounded-t">
+                                                                <h3 class="text-xl font-semibold text-gray-900">
+                                                                    Ulasan pelanggan
+                                                                </h3>
+                                                                <button type="button" class="end-2.5 text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center" data-modal-hide="ulasan-modal">
+                                                                    <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
+                                                                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
+                                                                    </svg>
+                                                                    <span class="sr-only">Close modal</span>
+                                                                </button>
+                                                            </div>
+                                                            <!-- Modal body -->
+                                                            <div class="p-4 md:p-5">
+                                                                <div class="space-y-4">
+                                                                    <div>
+                                                                        <label  class="block mb-2 text-sm font-medium text-gray-900">Pelanggan</label>
+                                                                        <p th:text="${riwayat.getCustomer().getUsername()}">
+                                                                        </p>
+                                                                    </div>
+                                                                    <div>
+                                                                        <label for="email" class="block mb-2 text-sm font-medium text-gray-900">Komentar</label>
+                                                                        <p th:text="${riwayat.getUlasan().getKomentar() ?: '-'}">
+                                                                        </p>
+                                                                    </div>
+                                                                    <div>
+                                                                        <label class="block mb-2 text-sm font-medium text-gray-900">Rating</label>
+                                                                        <div class="flex items-center" th:if="${riwayat.getPenyediaJasa() != null && riwayat.getUlasan() != null}">
+                                                                            <svg class="w-4 h-4 text-yellow-300 me-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 22 20">
+                                                                                <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z"/>
+                                                                            </svg>
+                                                                            <p th:text="${riwayat.getUlasan().getRating()}" class="font-bold">
+                                                                            </p>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>                                                 
+
 
                                                 <div id="crud-modal" tabindex="-1" aria-hidden="true"
                                                     class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
                                                     <div class="relative p-4 w-full max-w-md max-h-full">
-                                                        <!-- Modal content -->
                                                         <div class="relative bg-white rounded-lg shadow">
-                                                            <!-- Modal header -->
                                                             <div
                                                                 class="flex items-center justify-between p-4 md:p-5 border-b rounded-t">
                                                                 <h3 class="text-lg font-semibold text-gray-900">
@@ -262,7 +325,6 @@
                                                                     <span class="sr-only">Close modal</span>
                                                                 </button>
                                                             </div>
-                                                            <!-- Modal body -->
                                                             <form class="p-4 md:p-5" method="post" th:action="@{/dashboard/riwayat/ulasan/submit}">
                                                                 <input type="text" name="id_pesanan" hidden th:value="${riwayat.getId()}">
                                                                 <div class="grid gap-6 mb-4">
