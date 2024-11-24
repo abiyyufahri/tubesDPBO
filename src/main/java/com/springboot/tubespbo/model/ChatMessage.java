@@ -1,6 +1,8 @@
 package com.springboot.tubespbo.model;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -11,7 +13,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
 @Entity
-@Table(name = "ChatMessage")
+@Table(name = "chatMessage")
 public class ChatMessage {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -24,10 +26,18 @@ public class ChatMessage {
     @NotBlank
     private String isiPesan;
 
-    @ManyToOne
-    private TempChatRoom tempChatRoom; 
-
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private TempChatRoom tempChatRoom;
     
+    public ChatMessage(@NotNull User pengguna, @NotBlank String isiPesan, TempChatRoom tempChatRoom) {
+        this.pengguna = pengguna;
+        this.isiPesan = isiPesan;
+        this.tempChatRoom = tempChatRoom;
+    }
+
+    public ChatMessage() {
+    }
+
     public Long getId() {
         return id;
     }

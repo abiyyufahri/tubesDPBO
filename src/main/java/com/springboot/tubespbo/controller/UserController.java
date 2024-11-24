@@ -76,7 +76,8 @@ public class UserController {
             @RequestParam("password") String password,
             HttpSession session,
             RedirectAttributes redirAttrs,
-            Model model) {
+            Model model
+            ) {
         User isLoggedIn = userService.login(email, password);
         Sessiondata sessiondata;
         if (isLoggedIn != null) {

@@ -23,12 +23,11 @@ public class Ulasan {
     private Long id;
 
     @NotNull
-
     @OneToOne(mappedBy = "ulasan", cascade = CascadeType.ALL)
     private RiwayatPesanan pesanan;
 
-    @NotBlank
-    private double rating;
+    @NotNull
+    private int rating;
 
 
     private String komentar;
@@ -38,16 +37,14 @@ public class Ulasan {
    
     public Ulasan(){}
 
-    public Ulasan(Long id, @NotNull RiwayatPesanan pesanan, @NotBlank double rating, String komentar,
-            @NotNull LocalDateTime createdAt) {
-        this.id = id;
+    public Ulasan(@NotNull RiwayatPesanan pesanan, @NotNull int rating, String komentar) {
         this.pesanan = pesanan;
         this.rating = rating;
         this.komentar = komentar;
         this.createdAt = LocalDateTime.now();
     }
 
-    public void setRating(double rating) {
+    public void setRating(int rating) {
         this.rating = rating;
     }
 

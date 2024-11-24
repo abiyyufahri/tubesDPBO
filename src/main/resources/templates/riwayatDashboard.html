@@ -10,6 +10,7 @@
         rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://kit.fontawesome.com/7870c30b15.js" crossorigin="anonymous"></script>
+    <link href="https://cdn.jsdelivr.net/npm/flowbite@2.5.2/dist/flowbite.min.css" rel="stylesheet" />
     <style>
         /* Only keeping necessary custom styles, using Tailwind classes for colors */
         :root {
@@ -62,13 +63,18 @@
         .animate-slide-up {
             animation: slideUp 0.5s ease-out forwards;
         }
+
+        .star.selected {
+            color: #FFD700;
+            /* Warna kuning */
+        }
     </style>
 </head>
 
 <body class="bg-indigo-50 min-h-screen overflow-x-hidden">
     <div class="overlay fixed inset-0 bg-indigo-900/50 z-40 hidden opacity-0 transition-opacity duration-300"></div>
 
-    <header class="fixed w-full bg-white text-indigo-800 z-50 shadow-lg animate-slide-down">
+    <header class="fixed w-full bg-white text-indigo-800 shadow-lg animate-slide-down">
         <div class="max-w-7xl mx-auto px-4 py-2 flex items-center justify-between h-16">
             <button class="mobile-menu-button p-2 lg:hidden">
                 <span class="material-icons-outlined text-2xl">menu</span>
@@ -154,16 +160,24 @@
             <div class="flex flex-col lg:flex-row gap-4 mb-6 h-full">
                 <div th:if="${session.loggedUser.role == 'Customer'}"
                     class="flex-1 bg-white border border-indigo-200 rounded-xl p-6 animate-fade-in h-[78vh]">
-                    <div>
+                    <div class="flex justify-between">
                         <div>
                             <h3 class="font-bold text-xl text-indigo-800">Riwayat pemesanan</h3>
                         </div>
+                        <div th:if="${message}" class="bg-red-100 w-1/2 border border-red-400 text-red-700 px-4 py-2 rounded relative" role="alert">
+                            <strong class="font-bold">Error:</strong>
+                            <span class="block sm:inline" th:text="${message}"></span>
+                            <span class="absolute top-0 bottom-0 right-0 px-4 py-2">
+                              <svg class="fill-current h-6 w-6 text-red-500" role="button" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><title>Close</title><path d="M14.348 14.849a1.2 1.2 0 0 1-1.697 0L10 11.819l-2.651 3.029a1.2 1.2 0 1 1-1.697-1.697l2.758-3.15-2.759-3.152a1.2 1.2 0 1 1 1.697-1.697L10 8.183l2.651-3.031a1.2 1.2 0 1 1 1.697 1.697l-2.758 3.152 2.758 3.15a1.2 1.2 0 0 1 0 1.698z"/></svg>
+                            </span>
+                          </div>
                     </div>
 
                     <div class="mt-4">
                         <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
                             <div class="max-h-80 overflow-y-auto">
-                                <table th:if="${session.loggedUser.role == 'Customer'}" class="w-full text-sm text-left rtl:text-right text-gray-500">
+                                <table th:if="${session.loggedUser.role == 'Customer'}"
+                                    class="w-full text-sm text-left rtl:text-right text-gray-500">
                                     <thead class="text-xs text-gray-700 uppercase bg-gray-50">
                                         <tr>
                                             <th scope="col" class="px-6 py-3">
@@ -179,20 +193,22 @@
                                                 Waktu jasa
                                             </th>
                                             <th scope="col" class="px-6 py-3">
-                                                Action
+                                                Aksi
                                             </th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <tr th:each="riwayat : ${riwayatPesanan}" class="odd:bg-white even:bg-gray-50 border-b">
-                                            <th th:text="${riwayat.getNamaJenisJasa()}" scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
+                                        <tr th:each="riwayat : ${riwayatPesanan}"
+                                            class="odd:bg-white even:bg-gray-50 border-b">
+                                            <th th:text="${riwayat.getNamaJenisJasa()}" scope="row"
+                                                class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
                                             </th>
                                             <td class="px-6 py-4">
                                                 <p th:text="
                                                 ${riwayat.getStatus() == 1 ? 'Mencari penyedia' 
                                                 : riwayat.getStatus() == 2 ? 'Diterima' 
                                                 : riwayat.getStatus() == 10 ? 'Selesai' 
-                                                : 'Dibatalkan'}"  th:class="${riwayat.getStatus() == 1 ? 'bg-yellow-600 rounded-full text-center text-white' 
+                                                : 'Dibatalkan'}" th:class="${riwayat.getStatus() == 1 ? 'bg-yellow-600 rounded-full text-center text-white' 
                                                 : riwayat.getStatus() == 2 ? 'bg-blue-600 rounded-full text-center text-white' 
                                                 : riwayat.getStatus() == 10 ? 'bg-green-600 rounded-full text-center text-white' 
                                                 : riwayat.getStatus() == 11 ? 'bg-red-600 rounded-full text-center text-white' 
@@ -204,7 +220,124 @@
                                             <td th:text="${riwayat.formatWaktu()}" class="px-6 py-4">
                                             </td>
                                             <td class="px-6 py-4">
-                                                <a href="#" class="font-medium text-blue-600 hover:underline">Edit</a>
+                                                <button
+                                                    th:if="${riwayat.getPenyediaJasa() != null && riwayat.getStatus() == 10 && riwayat.getUlasan() == null}"
+                                                    data-modal-target="crud-modal" data-modal-toggle="crud-modal"
+                                                    class="block text-white bg-indigo-900 hover:bg-indigo-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
+                                                    type="button">
+                                                    Berikan ulasan
+                                                </button>
+                                                <button
+                                                    th:if="${riwayat.getPenyediaJasa() != null && riwayat.getStatus() == 2}"
+                                                    class="block text-white bg-green-600 hover:bg-indigo-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
+                                                    type="button">
+                                                    Chat penyedia jasa
+                                                </button>
+                                                <p th:if="${riwayat.getPenyediaJasa() == null}">
+                                                    Belum tersedia
+                                                </p>
+
+                                                <div id="crud-modal" tabindex="-1" aria-hidden="true"
+                                                    class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
+                                                    <div class="relative p-4 w-full max-w-md max-h-full">
+                                                        <!-- Modal content -->
+                                                        <div class="relative bg-white rounded-lg shadow">
+                                                            <!-- Modal header -->
+                                                            <div
+                                                                class="flex items-center justify-between p-4 md:p-5 border-b rounded-t">
+                                                                <h3 class="text-lg font-semibold text-gray-900">
+                                                                    Ulasan
+                                                                </h3>
+                                                                <button type="button"
+                                                                    class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center"
+                                                                    data-modal-toggle="crud-modal">
+                                                                    <svg class="w-3 h-3" aria-hidden="true"
+                                                                        xmlns="http://www.w3.org/2000/svg" fill="none"
+                                                                        viewBox="0 0 14 14">
+                                                                        <path stroke="currentColor"
+                                                                            stroke-linecap="round"
+                                                                            stroke-linejoin="round" stroke-width="2"
+                                                                            d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6" />
+                                                                    </svg>
+                                                                    <span class="sr-only">Close modal</span>
+                                                                </button>
+                                                            </div>
+                                                            <!-- Modal body -->
+                                                            <form class="p-4 md:p-5" method="post" th:action="@{/dashboard/riwayat/ulasan/submit}">
+                                                                <input type="text" name="id_pesanan" hidden th:value="${riwayat.getId()}">
+                                                                <div class="grid gap-6 mb-4">
+                                                                    <div class="col-span-2">
+                                                                        <label for="name"
+                                                                            class="block mb-2 text-sm font-medium text-gray-900">Penyedia
+                                                                            jasa</label>
+                                                                        <p class="text-xl font-bold"
+                                                                            th:text="${riwayat.getPenyediaJasa().getUsername()}">
+
+                                                                        </p>
+                                                                    </div>
+                                                                    <div class="col-span-2 justify-center">
+                                                                        <div 
+                                                                        id="starRating" class="w-full flex flex-row-reverse justify-center items-center">
+                                                                        <input type="number" hidden name="rating"
+                                                                            id="ratingInput">
+                                                                        <svg onclick="rateStar(5)" data-value="5"
+                                                                            class="star w-8 h-8 ms-3  text-gray-300 peer peer-hover:text-yellow-400 hover:text-yellow-400"
+                                                                            aria-hidden="true"
+                                                                            xmlns="http://www.w3.org/2000/svg"
+                                                                            fill="currentColor" viewBox="0 0 22 20">
+                                                                            <path
+                                                                                d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
+                                                                        </svg>
+                                                                        <svg onclick="rateStar(4)" data-value="4"
+                                                                            class="star w-8 h-8 ms-3  text-gray-300 peer peer-hover:text-yellow-400 hover:text-yellow-400"
+                                                                            aria-hidden="true"
+                                                                            xmlns="http://www.w3.org/2000/svg"
+                                                                            fill="currentColor" viewBox="0 0 22 20">
+                                                                            <path
+                                                                                d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
+                                                                        </svg>
+                                                                        <svg onclick="rateStar(3)" data-value="3"
+                                                                            class="star w-8 h-8 ms-3  text-gray-300 peer peer-hover:text-yellow-400 hover:text-yellow-400"
+                                                                            aria-hidden="true"
+                                                                            xmlns="http://www.w3.org/2000/svg"
+                                                                            fill="currentColor" viewBox="0 0 22 20">
+                                                                            <path
+                                                                                d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
+                                                                        </svg>
+                                                                        <svg onclick="rateStar(2)" data-value="2"
+                                                                            class="star w-8 h-8 ms-3  text-gray-300 peer peer-hover:text-yellow-400 hover:text-yellow-400"
+                                                                            aria-hidden="true"
+                                                                            xmlns="http://www.w3.org/2000/svg"
+                                                                            fill="currentColor" viewBox="0 0 22 20">
+                                                                            <path
+                                                                                d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
+                                                                        </svg>
+                                                                        <svg onclick="rateStar(1)" data-value="1"
+                                                                            class="star w-8 h-8 ms-3  text-gray-300 peer peer-hover:text-yellow-400 hover:text-yellow-400"
+                                                                            aria-hidden="true"
+                                                                            xmlns="http://www.w3.org/2000/svg"
+                                                                            fill="currentColor" viewBox="0 0 22 20">
+                                                                            <path
+                                                                                d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z" />
+                                                                        </svg>
+                                                                    </div>
+                                                                    </div>
+                                                                    <div class="col-span-2">
+                                                                        <label for="description"
+                                                                            class="block mb-2 text-sm font-medium text-gray-900">Komentar</label>
+                                                                        <textarea id="description" name="komentar" rows="4"
+                                                                            class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500"
+                                                                            placeholder="Write product description here"></textarea>
+                                                                    </div>
+                                                                </div>
+                                                                <button type="submit"
+                                                                    class="text-white inline-flex items-center bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center">
+                                                                    Tambah ulasan
+                                                                </button>
+                                                            </form>
+                                                        </div>
+                                                    </div>
+                                                </div>
                                             </td>
                                         </tr>
                                         <!-- Tambahkan lebih banyak baris di sini -->
@@ -212,7 +345,7 @@
                                 </table>
                             </div>
                         </div>
-                        
+
                     </div>
                 </div>
             </div>
@@ -246,7 +379,25 @@
                     notificationIcon.classList.add('scale-110');
                     setTimeout(() => notificationIcon.classList.remove('scale-110'), 200);
                 }, 5000);
+
+                function rateStar(value) {
+                    const stars = document.querySelectorAll("#starRating .star");
+
+                    // Hapus semua kelas 'selected'
+                    stars.forEach(star => star.classList.remove("selected"));
+
+                    // Tambahkan kelas 'selected' pada bintang yang diklik dan sebelumnya
+                    stars.forEach(star => {
+                        if (parseInt(star.getAttribute("data-value")) <= value) {
+                            star.classList.add("selected");
+                        }
+                    });
+
+                    console.log("Rating selected:", value);
+                    document.getElementById("ratingInput").value = value;
+                }
             </script>
+            <script src="https://cdn.jsdelivr.net/npm/flowbite@2.5.2/dist/flowbite.min.js"></script>
 </body>
 
 </html>

@@ -18,7 +18,7 @@ import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 
 @Entity
-@Table(name = "temp_chat_rooms")
+@Table(name = "tempChatRoom")
 public class TempChatRoom {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -43,6 +43,19 @@ public class TempChatRoom {
 
     @NotNull
     private String status;
+
+    public TempChatRoom(){
+
+    }
+    
+
+    public TempChatRoom(@NotNull User sender, @NotNull User receiver, @NotNull String status) {
+        this.sender = sender;
+        this.receiver = receiver;
+        this.status = status;
+    }
+
+
 
     public void addMessage(ChatMessage message) {
         this.chatMessages.add(message);
