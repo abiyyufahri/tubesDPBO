@@ -43,7 +43,6 @@ public class ChatMessageController {
             TempChatRoom tempChatRoom = tOption.get();
             ChatMessage chatMessage = new ChatMessage(sessiondata.getUser(), pesan, tempChatRoom);
             chatMessageRepository.save(chatMessage);
-            System.out.println("AAAAAAAAAAAAA");
         }
 
         return "redirect:/dashboard/jasa/chat/" + id_pesanan;

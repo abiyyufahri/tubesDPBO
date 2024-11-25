@@ -48,7 +48,6 @@ public class Pembayaran {
         if(voucher != null){
             return jumlah - (jumlah * (voucher.getDiskonPersen()/100));
         }
-        System.out.println("HALO");
         return jumlah;
     }
 

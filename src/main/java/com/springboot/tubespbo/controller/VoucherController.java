@@ -66,26 +66,10 @@ public class VoucherController {
         }
         Customer customer = (Customer) sessiondata.getUser();
         Voucher voucher = voucherRepository.findById(Long.parseLong(id)).get();
-        System.out.println(voucher.getDiskonPersen());
-        // for(Voucher v: customer.getVouchers()){
-        //     if(v.getId().equals(voucher.getId())){
-        //         v.setKodeVoucher("updated");
-        //         voucherRepository.save(v);
-        //         System.out.println(v.getKodeVoucher());
-        //         break;
-        //     }
-        // }
 
         voucher.setKodeVoucher("kkkkk");
         voucher.setStatusAktif(false);
         voucherRepository.save(voucher);
-        System.out.println(voucher.getKodeVoucher());
-        
-        // customer.addVoucher(voucher);
-        // voucher.setStatusAktif(false);
-        // voucher.setKodeVoucher("upadted");
-        System.out.println("V: " + voucher.getId() + voucher.isStatusAktif());
-        // customerRepository.save(customer);
 
         Sessiondata newSessiondata = new Sessiondata(customer, "Customer");
         session.setAttribute("loggedUser", newSessiondata);

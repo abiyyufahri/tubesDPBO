@@ -1,6 +1,8 @@
 package com.springboot.tubespbo.controller;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -8,11 +10,15 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.springboot.tubespbo.local_model.ChatMessageDTO;
 import com.springboot.tubespbo.local_model.Sessiondata;
+import com.springboot.tubespbo.model.ChatMessage;
 import com.springboot.tubespbo.model.RiwayatPesanan;
 import com.springboot.tubespbo.model.TempChatRoom;
+import com.springboot.tubespbo.repository.ChatMessageRepository;
 import com.springboot.tubespbo.repository.RiwayatPesananRepository;
 
 import jakarta.servlet.http.HttpSession;
@@ -25,6 +31,9 @@ public class TempChatRoomController {
     @Autowired
     RiwayatPesananRepository riwayatPesananRepository;
 
+    @Autowired
+    ChatMessageRepository chatMessageRepository;
+
     @GetMapping("/testing")
     public String getMethodName(
             HttpSession session,
@@ -36,6 +45,15 @@ public class TempChatRoomController {
         }
 
         return "chatDashboard";
+    }
+
+    @GetMapping("/getMessages")
+    @ResponseBody
+    public List<ChatMessageDTO> getMessages(@RequestParam("chatRoomId") String chatRoomId) {
+        List<ChatMessage> messages = chatMessageRepository.findByRoomId(chatRoomId);
+        return messages.stream()
+                .map(ChatMessageDTO::new)
+                .collect(Collectors.toList());
     }
 
     @GetMapping("/dashboard/jasa/chat/{id}")
@@ -83,7 +101,6 @@ public class TempChatRoomController {
         }
         Optional<RiwayatPesanan> rOptional = riwayatPesananRepository.findById(Long.parseLong(idPesanan));
         if (rOptional.isPresent()) {
-            System.out.println("P");
             RiwayatPesanan riwayatPesanan = rOptional.get();
 
             if (riwayatPesanan.getTempChatRoom() == null) {
@@ -92,7 +109,6 @@ public class TempChatRoomController {
                 riwayatPesanan.setTempChatRoom(tempChatRoom);
                 riwayatPesananRepository.save(riwayatPesanan);
             }
-            System.out.println(riwayatPesanan.getTempChatRoom().getCreatedAt());
             return "redirect:/dashboard/jasa/chat/" + riwayatPesanan.getId();
         }
 

@@ -60,7 +60,6 @@ public class RiwayatPesananController {
             return "redirect:/login";
         }
         Customer customer = (Customer) sessiondata.getUser();
-        System.out.println("hooooooooo");
         
         RiwayatPesanan sedangMemesan = riwayatPesananRepository.findBySedangMemesan(customer.getId());
         if (sedangMemesan != null && !jenisJasa.equals("0")) {
@@ -81,18 +80,14 @@ public class RiwayatPesananController {
             Voucher voucher = voucherOptional.get();
 
             
-            System.out.println("Voucher yang diambil: " + voucher.getKodeVoucher());
 
             
             if (voucher.isStatusAktif()) {
                 voucher.setStatusAktif(false); 
                 voucherRepository.save(voucher); 
-                System.out.println("Voucher status setelah update: " + voucher.isStatusAktif());
 
                 
                 pembayaran.setVoucher(voucher);
-                System.out.println(
-                        "Voucher status setelah update melalui pembayaran: " + pembayaran.getVoucher().isStatusAktif());
             } else {
                 redirAttrs.addFlashAttribute("message", "Voucher sudah digunakan atau tidak aktif");
                 return "redirect:/dashboard/pesan_jasa/" + jenisJasa;
