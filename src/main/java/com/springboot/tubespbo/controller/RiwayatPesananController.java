@@ -174,7 +174,13 @@ public class RiwayatPesananController {
         if (pesanan.isPresent()) {
             pesanan.get().setPenyediaJasa(penyediaJasa);
             pesanan.get().setStatus(10);
+            //baru
+
+            pesanan.get().getTempChatRoom().setStatus(false);
+            //baru
+            
             penyediaJasa.setTersedia(true);
+            
             riwayatPesananRepository.save(pesanan.get());
             penyediaJasaRepository.save(penyediaJasa);
 

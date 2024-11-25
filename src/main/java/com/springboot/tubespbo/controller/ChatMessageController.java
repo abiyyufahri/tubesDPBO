@@ -41,6 +41,9 @@ public class ChatMessageController {
         Optional<TempChatRoom> tOption = tempChatRoomRepository.findById(Long.parseLong(id_chat_room));
         if(tOption.isPresent()){
             TempChatRoom tempChatRoom = tOption.get();
+            if(!tempChatRoom.isStatus()){
+                return "redirect:/dashboard";
+            }
             ChatMessage chatMessage = new ChatMessage(sessiondata.getUser(), pesan, tempChatRoom);
             chatMessageRepository.save(chatMessage);
         }

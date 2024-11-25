@@ -167,11 +167,13 @@
                 <div class="flex-1 bg-white border border-indigo-200 rounded-xl p-6 animate-fade-in h-[78vh]">
                     <div class="flex justify-between">
                         <div>
-                            <button
+                            <a href="/dashboard">
+                                <button
                                 class="w-full block text-white bg-indigo-900 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
-                                type="submit">
+                                type="button">
                                 Kembali
                             </button>
+                            </a>
                         </div>
                         <div th:if="${message}"
                             class="bg-red-100 w-1/2 border border-red-400 text-red-700 px-4 py-2 rounded relative"

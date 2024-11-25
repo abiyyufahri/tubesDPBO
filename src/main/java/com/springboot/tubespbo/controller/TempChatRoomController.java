@@ -34,18 +34,6 @@ public class TempChatRoomController {
     @Autowired
     ChatMessageRepository chatMessageRepository;
 
-    @GetMapping("/testing")
-    public String getMethodName(
-            HttpSession session,
-            Model model) {
-        Sessiondata sessiondata;
-        sessiondata = (Sessiondata) session.getAttribute("loggedUser");
-        if (sessiondata == null) {
-            return "redirect:/login";
-        }
-
-        return "chatDashboard";
-    }
 
     @GetMapping("/getMessages")
     @ResponseBody
@@ -72,6 +60,10 @@ public class TempChatRoomController {
 
         if (rOptional.isPresent()) {
             riwayatPesanan = rOptional.get();
+            if(!riwayatPesanan.getTempChatRoom().isStatus()){
+                return "redirect:/dashboard";
+            }
+
             if (riwayatPesanan.getCustomer().getId().equals(sessiondata.getUser().getId())
                     || riwayatPesanan.getPenyediaJasa().getId().equals(sessiondata.getUser().getId())) {
                 model.addAttribute("riwayat", riwayatPesanan);
