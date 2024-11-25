@@ -9,6 +9,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -26,15 +27,18 @@ public class TempChatRoom {
 
     @NotNull
     @OneToOne
-    private User sender;
+    private User userA;
 
     @NotNull
     @OneToOne
-    private User receiver;
+    private User userB;
 
     @OneToMany(mappedBy = "tempChatRoom", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ChatMessage> chatMessages = new ArrayList<>();
 
+    @OneToOne(cascade = CascadeType.ALL,mappedBy = "tempChatRoom", fetch = FetchType.EAGER)
+    private RiwayatPesanan pesanan;
+    
     @CreationTimestamp
     private LocalDateTime createdAt;
 
@@ -42,17 +46,17 @@ public class TempChatRoom {
     private LocalDateTime updatedAt;
 
     @NotNull
-    private String status;
+    private boolean status;
 
     public TempChatRoom(){
 
     }
     
 
-    public TempChatRoom(@NotNull User sender, @NotNull User receiver, @NotNull String status) {
-        this.sender = sender;
-        this.receiver = receiver;
-        this.status = status;
+    public TempChatRoom(@NotNull User userA, @NotNull User userB) {
+        this.userA = userA;
+        this.userB = userB;
+        this.status = true;
     }
 
 
@@ -66,5 +70,41 @@ public class TempChatRoom {
         return this.chatMessages;
     }
 
-    // Getters and Setters
+
+    public Long getId() {
+        return id;
+    }
+
+
+    public User getUserA() {
+        return userA;
+    }
+
+
+    public User getUserB() {
+        return userB;
+    }
+
+
+    public RiwayatPesanan getPesanan() {
+        return pesanan;
+    }
+
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
+    }
+
+
+    public boolean isStatus() {
+        return status;
+    }
+
+    
+
 }

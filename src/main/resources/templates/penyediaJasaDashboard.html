@@ -271,10 +271,10 @@
                                 <div class="flex gap-2 mt-4">
                                     <div class="col w-full">
                                         <form th:if="${sedangDiambil != null}"
-                                            th:action="@{/dashboard/jasa_diambil/chat}" method="post">
-                                            <input hidden type="text" name="riwayat"
+                                            th:action="@{/dashboard/jasa/mulai_chat}" method="post">
+                                            <input hidden type="text" name="id_pesanan"
                                                 th:value="${sedangDiambil.getId()}">
-                                            <button type="submit"
+                                                <button type="submit"
                                                 class="text-white w-full justify-center inline-flex items-center bg-indigo-900 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center">
                                                 Chat pelanggan
                                             </button>

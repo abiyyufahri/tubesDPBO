@@ -233,30 +233,44 @@
                                                 <button
                                                     th:if="${riwayat.getPenyediaJasa() != null && riwayat.getStatus() == 10 && riwayat.getUlasan() == null && session.loggedUser.role == 'Customer'}"
                                                     data-modal-target="crud-modal" data-modal-toggle="crud-modal"
-                                                    class="block text-white bg-indigo-900 hover:bg-indigo-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
+                                                    class="block w-full text-white bg-indigo-900 hover:bg-indigo-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
                                                     type="button">
                                                     Berikan ulasan
                                                 </button>
-                                                <button
-                                                    th:if="${riwayat.getPenyediaJasa() != null && riwayat.getStatus() == 2 && session.loggedUser.role == 'Customer'}"
-                                                    class="block text-white bg-green-600 hover:bg-indigo-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
-                                                    type="button">
+                                                <form th:if="${riwayat.getStatus() == 1 && session.loggedUser.role == 'Customer'}" th:action="@{/dashboard/batalkan_jasa}" method="post">
+                                                    <input type="text" name="id_pesanan" hidden th:value="${riwayat.getId()}">
+                                                    <button
+                                                    class="w-full block text-white bg-red-600 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
+                                                    type="submit">
+                                                    Batalkan
+                                                </button>
+                                                </form>
+                                                <form th:if="${riwayat.getPenyediaJasa() != null && riwayat.getStatus() == 2 && session.loggedUser.role == 'Customer'}" th:action="@{/dashboard/jasa/mulai_chat}" method="post">
+                                                    <input hidden type="text" name="id_pesanan" th:value="${riwayat.getId()}">
+                                                    <button
+                                                    class="block w-full text-white bg-green-600 hover:bg-indigo-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
+                                                    type="submit">
                                                     Chat penyedia jasa
                                                 </button>
-                                                <p th:if="${riwayat.getPenyediaJasa() == null}">
-                                                    Belum tersedia
-                                                </p>
-                                                <div class="flex items-center " th:if="${riwayat.getPenyediaJasa() != null && riwayat.getUlasan() != null}">
-                                                    <svg class="w-4 h-4 text-yellow-300 me-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 22 20">
-                                                        <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z"/>
-                                                    </svg>
-                                                    <p th:text="${riwayat.getUlasan().getRating()}" class="font-bold">
-
-                                                    </p>
+                                                </form>
+                                                <div>
+                                                    <div class="flex items-center " th:if="${riwayat.getPenyediaJasa() != null && riwayat.getUlasan() != null}">
+                                                        <svg class="w-4 h-4 text-yellow-300 me-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 22 20">
+                                                            <path d="M20.924 7.625a1.523 1.523 0 0 0-1.238-1.044l-5.051-.734-2.259-4.577a1.534 1.534 0 0 0-2.752 0L7.365 5.847l-5.051.734A1.535 1.535 0 0 0 1.463 9.2l3.656 3.563-.863 5.031a1.532 1.532 0 0 0 2.226 1.616L11 17.033l4.518 2.375a1.534 1.534 0 0 0 2.226-1.617l-.863-5.03L20.537 9.2a1.523 1.523 0 0 0 .387-1.575Z"/>
+                                                        </svg>
+                                                        <p th:text="${riwayat.getUlasan().getRating()}" class="font-bold">
+    
+                                                        </p>
+                                                    </div>
+                                                    <button th:if="${riwayat.getPenyediaJasa() != null && riwayat.getStatus() == 10 && riwayat.getUlasan() != null}" data-modal-target="ulasan-modal" data-modal-toggle="ulasan-modal" class="text-indigo-900">
+                                                        Lihat ulasan
+                                                    </button>
                                                 </div>
-                                                <button data-modal-target="ulasan-modal" data-modal-toggle="ulasan-modal" class="text-indigo-900">
-                                                    Lihat ulasan
-                                                </button>
+
+                                                <p th:if="${(session.loggedUser.role == 'Penyedia Jasa' && riwayat.getUlasan() == null) || (session.loggedUser.role == 'Customer' && riwayat.getStatus() == 11)}">
+                                                    Tidak ada
+                                                </p>
+
 
                                                 <div th:if="${riwayat.getUlasan() != null}" id="ulasan-modal" tabindex="-1" aria-hidden="true" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
                                                     <div class="relative p-4 w-full max-w-md max-h-full">
@@ -302,7 +316,7 @@
                                                 </div>                                                 
 
 
-                                                <div id="crud-modal" tabindex="-1" aria-hidden="true"
+                                                <div th:if="${riwayat.getPenyediaJasa() != null && riwayat.getStatus() == 10}" id="crud-modal" tabindex="-1" aria-hidden="true"
                                                     class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
                                                     <div class="relative p-4 w-full max-w-md max-h-full">
                                                         <div class="relative bg-white rounded-lg shadow">

@@ -297,12 +297,22 @@
                             <p th:text="${pesananAktif.get(0).formatWaktu()}" class="font-bold w-2/3 mt-2">
                             </p>
                             <div th:if="${pesananAktif.get(0).getPenyediaJasa() != null}">
-                                <label for="description"
-                                        class="block mt-2 text-sm font-medium text-gray-600 ">Diambil oleh</label>
-                            <p th:text="${pesananAktif.get(0).getPenyediaJasa().getUsername()}" class="font-bold w-2/3 text-xl">
-                            </p>
+                                <label for="description" class="block mt-2 text-sm font-medium text-gray-600 ">Diambil
+                                    oleh</label>
+                                <p th:text="${pesananAktif.get(0).getPenyediaJasa().getUsername()}"
+                                    class="font-bold w-2/3 text-xl">
+                                </p>
                             </div>
-                        </div>
+                            <form class="mt-4" th:if="${pesananAktif.get(0).getStatus() == 1 && session.loggedUser.role == 'Customer'}"
+                                th:action="@{/dashboard/batalkan_jasa}" method="post">
+                                <input type="text" name="id_pesanan" hidden th:value="${pesananAktif.get(0).getId()}">
+                                <button
+                                    class="w-full block text-white bg-red-600 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
+                                    type="submit">
+                                    Batalkan
+                                </button>
+                            </form>
+                            </div>
                         <div th:if="${pesananAktif.isEmpty()}">
                             <h4>Sednag tidak memesan</h4>
                         </div>
@@ -336,7 +346,8 @@
                                     <div class="col">
                                         <label for="description"
                                             class="block mt-2 text-sm font-medium text-gray-600 ">Provinsi</label>
-                                        <p th:text="${session.loggedUser.user.getAlamat().getProvinsi()}" class="font-bold">
+                                        <p th:text="${session.loggedUser.user.getAlamat().getProvinsi()}"
+                                            class="font-bold">
                                         </p>
                                     </div>
                                 </div>

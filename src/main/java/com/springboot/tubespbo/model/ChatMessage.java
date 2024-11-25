@@ -1,5 +1,9 @@
 package com.springboot.tubespbo.model;
 
+import java.time.LocalDateTime;
+
+import org.hibernate.annotations.CreationTimestamp;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -20,7 +24,7 @@ public class ChatMessage {
     private Long id;
     
     @NotNull
-    @OneToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     private User pengguna;
 
     @NotBlank
@@ -28,6 +32,9 @@ public class ChatMessage {
 
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private TempChatRoom tempChatRoom;
+
+    @CreationTimestamp
+    private LocalDateTime createdAt;
     
     public ChatMessage(@NotNull User pengguna, @NotBlank String isiPesan, TempChatRoom tempChatRoom) {
         this.pengguna = pengguna;
@@ -57,4 +64,9 @@ public class ChatMessage {
     public void setTempChatRoom(TempChatRoom tempChatRoom) {
         this.tempChatRoom = tempChatRoom;
     }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+    
 }

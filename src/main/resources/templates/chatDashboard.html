@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Responsive Dashboard</title>
+    <link
+        href="https://fonts.googleapis.com/css?family=Material+Icons|Material+Icons+Outlined|Material+Icons+Two+Tone|Material+Icons+Round|Material+Icons+Sharp"
+        rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://kit.fontawesome.com/7870c30b15.js" crossorigin="anonymous"></script>
+    <link href="https://cdn.jsdelivr.net/npm/flowbite@2.5.2/dist/flowbite.min.css" rel="stylesheet" />
+    <style>
+        /* Only keeping necessary custom styles, using Tailwind classes for colors */
+        :root {
+            --header-height: 4rem;
+            --sidebar-width: 240px;
+        }
+
+        @keyframes slideDown {
+            from {
+                transform: translateY(-100%);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(20px);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .animate-slide-down {
+            animation: slideDown 0.5s ease-out;
+        }
+
+        .animate-fade-in {
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        .animate-slide-up {
+            animation: slideUp 0.5s ease-out forwards;
+        }
+
+        .star.selected {
+            color: #FFD700;
+            /* Warna kuning */
+        }
+    </style>
+</head>
+
+<body class="bg-indigo-50 min-h-screen overflow-x-hidden">
+    <div class="overlay fixed inset-0 bg-indigo-900/50 z-40 hidden opacity-0 transition-opacity duration-300"></div>
+
+    <header class="fixed w-full bg-white text-indigo-800 shadow-lg animate-slide-down">
+        <div class="max-w-7xl mx-auto px-4 py-2 flex items-center justify-between h-16">
+            <button class="mobile-menu-button p-2 lg:hidden">
+                <span class="material-icons-outlined text-2xl">menu</span>
+            </button>
+            <div class="text-xl font-bold text-blue-900">
+                Diservis
+            </div>
+            <div class="flex items-center space-x-2">
+                <span
+                    class="material-icons-outlined p-2 text-2xl cursor-pointer hover:text-indigo-800 transition-transform duration-300 hover:scale-110 hidden md:block">search</span>
+                <span
+                    class="material-icons-outlined p-2 text-2xl cursor-pointer hover:text-indigo-800 transition-transform duration-300 hover:scale-110 hidden md:block">notifications</span>
+                <img class="w-10 h-10 rounded-full transition-transform duration-300 hover:scale-110 object-cover"
+                    src="https://i.pinimg.com/564x/de/0f/3d/de0f3d06d2c6dbf29a888cf78e4c0323.jpg" alt="Profile">
+                <div class="row">
+                    <span class="p-2" th:text="${session.loggedUser.user.getUsername()}">
+                        -
+                    </span>
+
+                    <span th:if="${session.loggedUser.role == 'Customer'}"
+                        class="p-2 bg-blue-600 text-white rounded-full" th:text="${session.loggedUser.role}">
+                    </span>
+
+                    <span th:if="${session.loggedUser.role == 'Penyedia Jasa'}"
+                        class="p-2 bg-yellow-600 text-white rounded-full" th:text="${session.loggedUser.role}">
+                        -
+                    </span>
+
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="pt-16 max-w-7xl mx-auto flex">
+        <aside
+            class="sidebar fixed lg:static w-[240px] bg-indigo-50 h-[calc(100vh-4rem)] lg:h-auto transform -translate-x-full lg:translate-x-0 transition-transform duration-300 z-45 overflow-y-auto p-4">
+            <div
+                class="bg-white rounded-xl shadow-lg mb-6 p-4 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
+                <a href="/dashboard"
+                    class="flex items-center text-gray-600 py-4 transition-all duration-300 hover:translate-x-1">
+                    <span class="material-icons-outlined mr-2">dashboard</span>
+                    Home
+                    <span class="material-icons-outlined ml-auto">keyboard_arrow_right</span>
+                </a>
+                <a th:if="${session.loggedUser.role == 'Customer'}" href="/dashboard/riwayat"
+                    class="flex items-center text-indigo-800 hover:text-indigo-800 py-4 transition-all duration-300 hover:translate-x-1">
+                    <span class="material-icons-outlined mr-2">history</span>
+                    Riwayat pemesanan
+                    <span class="material-icons-outlined ml-auto">keyboard_arrow_right</span>
+                </a>
+                <a th:if="${session.loggedUser.role == 'Penyedia Jasa'}" href="/dashboard/riwayat"
+                    class="flex items-center text-indigo-800 hover:text-indigo-800 py-4 transition-all duration-300 hover:translate-x-1">
+                    <span class="material-icons-outlined mr-2">history</span>
+                    Riwayat pesanan
+                    <span class="material-icons-outlined ml-auto">keyboard_arrow_right</span>
+                </a>
+                <a th:if="${session.loggedUser.role == 'Customer'}" href="/dashboard/voucher"
+                    class="flex items-center text-gray-600 hover:text-indigo-800 py-4 transition-all duration-300 hover:translate-x-1">
+                    <span class="material-icons-outlined mr-2">label</span>
+                    Voucher
+                    <span class="material-icons-outlined ml-auto">keyboard_arrow_right</span>
+                </a>
+            </div>
+
+            <div
+                class="bg-white rounded-xl shadow-lg p-4 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
+                <a href="#"
+                    class="flex items-center text-gray-600 hover:text-indigo-800 py-4 transition-all duration-300 hover:translate-x-1">
+                    <span class="material-icons-outlined mr-2">face</span>
+                    Profile
+                    <span class="material-icons-outlined ml-auto">keyboard_arrow_right</span>
+                </a>
+                <a href="#"
+                    class="flex items-center text-gray-600 hover:text-indigo-800 py-4 transition-all duration-300 hover:translate-x-1">
+                    <span class="material-icons-outlined mr-2">settings</span>
+                    Settings
+                    <span class="material-icons-outlined ml-auto">keyboard_arrow_right</span>
+                </a>
+                <a th:href="@{/logout}"
+                    class="flex items-center text-gray-600 hover:text-indigo-800 py-4 transition-all duration-300 hover:translate-x-1">
+                    <span class="material-icons-outlined mr-2">power_settings_new</span>
+                    Log out
+                    <span class="material-icons-outlined ml-auto">keyboard_arrow_right</span>
+                </a>
+            </div>
+        </aside>
+
+        <main class="flex-1 p-4 h-full">
+            <div class="flex flex-col lg:flex-row gap-4 mb-6 h-full">
+                <div class="flex-1 bg-white border border-indigo-200 rounded-xl p-6 animate-fade-in h-[78vh]">
+                    <div class="flex justify-between">
+                        <div>
+                            <button
+                                class="w-full block text-white bg-indigo-900 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
+                                type="submit">
+                                Kembali
+                            </button>
+                        </div>
+                        <div th:if="${message}"
+                            class="bg-red-100 w-1/2 border border-red-400 text-red-700 px-4 py-2 rounded relative"
+                            role="alert">
+                            <strong class="font-bold">Error:</strong>
+                            <span class="block sm:inline" th:text="${message}"></span>
+                            <span class="absolute top-0 bottom-0 right-0 px-4 py-2">
+                                <svg class="fill-current h-6 w-6 text-red-500" role="button"
+                                    xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                                    <title>Close</title>
+                                    <path
+                                        d="M14.348 14.849a1.2 1.2 0 0 1-1.697 0L10 11.819l-2.651 3.029a1.2 1.2 0 1 1-1.697-1.697l2.758-3.15-2.759-3.152a1.2 1.2 0 1 1 1.697-1.697L10 8.183l2.651-3.031a1.2 1.2 0 1 1 1.697 1.697l-2.758 3.152 2.758 3.15a1.2 1.2 0 0 1 0 1.698z" />
+                                </svg>
+                            </span>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-xl text-indigo-800">Chat room</h3>
+                        </div>
+                    </div>
+
+                    <div class="mt-4">
+                        <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
+                            <div class="max-h-80 grid gap-y-6 row overflow-y-auto">
+                                <!-- chatPesanan -->
+
+                                <div th:each="c : ${riwayat.getTempChatRoom().getChatMessages()}" class="grid gap-y-6">
+                                    <div th:if="${!c.getPengguna().getId().equals(session.loggedUser.getUser().getId())}" class="flex items-start gap-2.5">
+                                        <div class="text-indigo-900">
+                                            <span class="material-icons-outlined">account_circle</span>
+                                        </div>
+                                        <div
+                                            class="flex flex-col w-full max-w-[320px] leading-1.5 p-4 border-gray-200 bg-gray-100 rounded-e-xl rounded-es-xl">
+                                            <div class="flex items-center space-x-2 rtl:space-x-reverse">
+                                                <span class="text-sm font-semibold text-gray-900" th:text="${c.getPengguna().getUsername()}"></span>
+                                                <span class="text-sm font-normal text-gray-500" th:text="${c.getCreatedAt()}"></span>
+                                            </div>
+                                            <p class="text-sm font-normal py-2.5 text-gray-900" th:text="${c.getIsiPesan()}"></p>
+                                            <span class="text-sm font-normal text-gray-500">Terkirim</span>
+                                        </div>
+                                        <button id="dropdownMenuIconButton" data-dropdown-toggle="dropdownDots"
+                                            data-dropdown-placement="bottom-start"
+                                            class="inline-flex self-center items-center p-2 text-sm font-medium text-center text-gray-900 bg-white rounded-lg hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-gray-50"
+                                            type="button">
+                                            <svg class="w-4 h-4 text-gray-500" aria-hidden="true"
+                                                xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 4 15">
+                                                <path
+                                                    d="M3.5 1.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0Zm0 6.041a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0Zm0 5.959a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0Z" />
+                                            </svg>
+                                        </button>
+                                    </div>
+    
+                                    <div th:if="${c.getPengguna().getId().equals(session.loggedUser.getUser().getId())}" class="ml-auto flex items-start gap-2.5">
+                                        <div
+                                            class="flex flex-col w-full max-w-[320px] leading-1.5 p-4 border-gray-200 bg-indigo-900 rounded-s-xl rounded-ee-xl">
+                                            <div class="flex items-center space-x-2 rtl:space-x-reverse">
+                                                <span class="text-sm font-semibold text-white" th:text="${c.getPengguna().getUsername()}"></span>
+                                                <span class="text-sm font-normal text-white " th:text="${c.getCreatedAt()}"></span>
+                                            </div>
+                                            <p class="text-sm font-normal py-2.5 text-white" th:text="${c.getIsiPesan()}"></p>
+                                            <span class="text-sm font-normal text-white">Terkirim</span>
+                                        </div>
+                                        <div class="text-indigo-900">
+                                            <span class="material-icons-outlined">account_circle</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+
+                            </div>
+                        </div>
+
+                    </div>
+                    <form th:action="@{/dashboard/jasa/chat/kirim_pesan}" method="post" class="flex mt-6 w-full gap-x-6">
+                        <div class="mb-6 w-full">
+                            <input hidden type="text" name="id_pesanan" th:value="${riwayat.getId()}">
+                            <input hidden type="text" name="id_chat_room" th:value="${riwayat.getTempChatRoom().getId()}">
+                            <input type="text" name="pesan" placeholder="Masukkan pesan"
+                                class="w-full bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
+                        </div>
+                        <div>
+                            <button
+                                class="w-full block text-white bg-indigo-900 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center"
+                                type="submit">
+                                Kirim
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <script>
+                // Mobile menu functionality
+                const mobileMenuButton = document.querySelector('.mobile-menu-button');
+                const sidebar = document.querySelector('.sidebar');
+                const overlay = document.querySelector('.overlay');
+
+                function toggleMobileMenu() {
+                    sidebar.classList.toggle('translate-x-0');
+                    overlay.classList.toggle('hidden');
+                    setTimeout(() => overlay.classList.toggle('opacity-0'), 0);
+                    document.body.style.overflow = sidebar.classList.contains('translate-x-0') ? 'hidden' : '';
+                }
+
+                mobileMenuButton.addEventListener('click', toggleMobileMenu);
+                overlay.addEventListener('click', toggleMobileMenu);
+
+                // Close mobile menu on window resize if open
+                window.addEventListener('resize', () => {
+                    if (window.innerWidth >= 1024 && sidebar.classList.contains('translate-x-0')) {
+                        toggleMobileMenu();
+                    }
+                });
+
+                // Notification animation
+                const notificationIcon = document.querySelector('.material-icons-outlined:nth-child(2)');
+                setInterval(() => {
+                    notificationIcon.classList.add('scale-110');
+                    setTimeout(() => notificationIcon.classList.remove('scale-110'), 200);
+                }, 5000);
+
+                function rateStar(value) {
+                    const stars = document.querySelectorAll("#starRating .star");
+
+                    // Hapus semua kelas 'selected'
+                    stars.forEach(star => star.classList.remove("selected"));
+
+                    // Tambahkan kelas 'selected' pada bintang yang diklik dan sebelumnya
+                    stars.forEach(star => {
+                        if (parseInt(star.getAttribute("data-value")) <= value) {
+                            star.classList.add("selected");
+                        }
+                    });
+
+                    console.log("Rating selected:", value);
+                    document.getElementById("ratingInput").value = value;
+                }
+            </script>
+            <script src="https://cdn.jsdelivr.net/npm/flowbite@2.5.2/dist/flowbite.min.js"></script>
+</body>
+
+</html>

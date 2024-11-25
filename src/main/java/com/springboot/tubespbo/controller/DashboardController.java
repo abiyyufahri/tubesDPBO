@@ -80,23 +80,22 @@ public class DashboardController {
         if (session.getAttribute("loggedUser") == null) {
             return "redirect:/login"; 
         }
+        List<RiwayatPesanan> riwayatPesanans = null;
         
         if("Customer".equals(sessiondata.getRole())){
             Optional<Customer> customer = customerRepository.findById(sessiondata.getUser().getId());
-            List<RiwayatPesanan> riwayatPesanans = null;
             if(customer.isPresent()){
                 riwayatPesanans = riwayatPesananRepository.findByCustomerId(customer.get().getId());
             }
-            model.addAttribute("riwayatPesanan", riwayatPesanans);
         }
         else if("Penyedia Jasa".equals(sessiondata.getRole())){
             Optional<PenyediaJasa> penyediaJasa = penyediaJasaRepository.findById(sessiondata.getUser().getId());
-            List<RiwayatPesanan> riwayatPesanans = null;
             if(penyediaJasa.isPresent()){
                 riwayatPesanans = riwayatPesananRepository.findByPenyediaJasaId(sessiondata.getUser().getId());
             }
-            model.addAttribute("riwayatPesanan", riwayatPesanans);
         }
+        model.addAttribute("riwayatPesanan", riwayatPesanans);
+        riwayatPesanans.sort((d1, d2) -> d2.getCreatedAt().compareTo(d1.getCreatedAt()));
         return "riwayatDashboard"; 
     }
 

@@ -110,6 +110,30 @@ public class RiwayatPesananController {
         return "redirect:/dashboard";
     }
 
+    @PostMapping("/dashboard/batalkan_jasa")
+    public String batalkanJasa(
+            @RequestParam("id_pesanan") String idPesanan,
+            HttpSession session,
+            RedirectAttributes redirAttrs,
+            Model model) {
+        Sessiondata sessiondata;
+        sessiondata = (Sessiondata) session.getAttribute("loggedUser");
+        if (sessiondata == null) {
+            return "redirect:/login";
+        }
+
+        Optional<RiwayatPesanan> pesanan = riwayatPesananRepository.findById(Long.parseLong(idPesanan));
+        if (pesanan.isPresent()) {
+            if(pesanan.get().getPenyediaJasa() != null){
+                redirAttrs.addFlashAttribute("message", "Pesanan telah diterima penyedia jasa");
+                return "redirect:/dashboard/riwayat";
+            }
+            pesanan.get().setStatus(11);
+            riwayatPesananRepository.save(pesanan.get());
+        }
+        return "redirect:/dashboard/riwayat";
+    }
+
     @PostMapping("/dashboard/terima_jasa")
     public String terimaJasa(
             @RequestParam("riwayat") String idPesanan,

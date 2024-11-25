@@ -44,6 +44,10 @@ public class RiwayatPesanan {
     @JoinColumn(name = "id_pembayaran")
     private Pembayaran pembayaran;
 
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "id_temp_chat_room")
+    private TempChatRoom tempChatRoom;
+
     @NotNull
     @ManyToOne
     @JoinColumn(name = "id_customer")
@@ -155,5 +159,18 @@ public class RiwayatPesanan {
 
     public void setUlasan(Ulasan ulasan) {
         this.ulasan = ulasan;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public TempChatRoom getTempChatRoom() {
+        return tempChatRoom;
+    }
+
+    public void setTempChatRoom(TempChatRoom tempChatRoom) {
+        this.tempChatRoom = tempChatRoom;
     }    
+    
 }
