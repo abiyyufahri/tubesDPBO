@@ -162,7 +162,8 @@ public class RiwayatPesananController {
             HttpSession session,
             RedirectAttributes redirAttrs,
             Model model) {
-        Sessiondata sessiondata;
+        try {
+            Sessiondata sessiondata;
         sessiondata = (Sessiondata) session.getAttribute("loggedUser");
         if (sessiondata == null) {
             return "redirect:/login";
@@ -172,21 +173,29 @@ public class RiwayatPesananController {
         Optional<RiwayatPesanan> pesanan = riwayatPesananRepository.findById(Long.parseLong(idPesanan));
 
         if (pesanan.isPresent()) {
-            pesanan.get().setPenyediaJasa(penyediaJasa);
-            pesanan.get().setStatus(10);
+            RiwayatPesanan rPesanan = pesanan.get();
+
+            
+
+            rPesanan.setPenyediaJasa(penyediaJasa);
+            rPesanan.setStatus(10);
             //baru
 
-            pesanan.get().getTempChatRoom().setStatus(false);
+            rPesanan.getTempChatRoom().setStatus(false);
             //baru
             
             penyediaJasa.setTersedia(true);
             
-            riwayatPesananRepository.save(pesanan.get());
+            riwayatPesananRepository.save(rPesanan);
             penyediaJasaRepository.save(penyediaJasa);
 
-            Sessiondata newSessiondata = new Sessiondata(penyediaJasa, sessiondata.getRole());
-            session.setAttribute("loggedUser", newSessiondata);
+            System.out.println("Error selesai jasa : " + rPesanan.getStatus());
         }
-        return "redirect:/dashboard";
+            return "redirect:/dashboard";    
+        } catch (Exception e) {
+            System.out.println("Error selesai jasa : " + e);
+            return "redirect:/dashboard";    
+        }
+        
     }
 }
