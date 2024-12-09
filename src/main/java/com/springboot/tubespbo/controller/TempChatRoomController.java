@@ -33,14 +33,26 @@ public class TempChatRoomController {
     @Autowired
     ChatMessageRepository chatMessageRepository;
 
-
     @GetMapping("/getMessages")
     @ResponseBody
-    public List<ChatMessageDTO> getMessages(@RequestParam("chatRoomId") String chatRoomId) {
-        List<ChatMessage> messages = chatMessageRepository.findByRoomId(chatRoomId);
-        return messages.stream()
-                .map(ChatMessageDTO::new)
-                .collect(Collectors.toList());
+    public List<ChatMessageDTO> getMessages(@RequestParam("chatRoomId") String chatRoomId, HttpSession session) {
+        try {
+            Sessiondata sessiondata = (Sessiondata) session.getAttribute("loggedUser");
+            if (sessiondata == null) {
+                return null;
+            }
+
+            if(chatRoomId == null){
+                return null;
+            }
+            List<ChatMessage> messages = chatMessageRepository.findByRoomId(chatRoomId);
+            return messages.stream()
+                    .map(ChatMessageDTO::new)
+                    .collect(Collectors.toList());
+        } catch (Exception e) {
+            System.err.println(e);
+            return null;
+        }
     }
 
     @GetMapping("/dashboard/jasa/chat/{id}")
@@ -48,34 +60,39 @@ public class TempChatRoomController {
             @PathVariable("id") String id,
             HttpSession session,
             Model model) {
-        Sessiondata sessiondata;
-        sessiondata = (Sessiondata) session.getAttribute("loggedUser");
-        if (sessiondata == null) {
-            return "redirect:/login";
-        }
-
-        Optional<RiwayatPesanan> rOptional = riwayatPesananRepository.findById(Long.parseLong(id));
-        RiwayatPesanan riwayatPesanan;
-
-        if (rOptional.isPresent()) {
-            riwayatPesanan = rOptional.get();
-            if(!riwayatPesanan.getTempChatRoom().isStatus()){
-                return "redirect:/dashboard";
+        try {
+            Sessiondata sessiondata;
+            sessiondata = (Sessiondata) session.getAttribute("loggedUser");
+            if (sessiondata == null) {
+                return "redirect:/login";
             }
 
-            if (riwayatPesanan.getCustomer().getId().equals(sessiondata.getUser().getId())
-                    || riwayatPesanan.getPenyediaJasa().getId().equals(sessiondata.getUser().getId())) {
-                model.addAttribute("riwayat", riwayatPesanan);
-                return "chatDashboard";
+            Optional<RiwayatPesanan> rOptional = riwayatPesananRepository.findById(Long.parseLong(id));
+            RiwayatPesanan riwayatPesanan;
+
+            if (rOptional.isPresent()) {
+                riwayatPesanan = rOptional.get();
+                if (!riwayatPesanan.getTempChatRoom().isStatus()) {
+                    return "redirect:/dashboard";
+                }
+
+                if (riwayatPesanan.getCustomer().getId().equals(sessiondata.getUser().getId())
+                        || riwayatPesanan.getPenyediaJasa().getId().equals(sessiondata.getUser().getId())) {
+                    model.addAttribute("riwayat", riwayatPesanan);
+                    return "chatDashboard";
+                } else {
+                    return "redirect:/dashboard";
+                }
+            }
+
+            if (sessiondata.getRole().equals("Customer")) {
+                return "redirect:/dashboard/riwayat";
             } else {
                 return "redirect:/dashboard";
             }
-        }
-
-        if (sessiondata.getRole().equals("Customer")) {
-            return "redirect:/dashboard/riwayat";
-        } else {
-            return "redirect:/dashboard";
+        } catch (Exception e) {
+            System.err.println(e);
+            return "redirect:/login";
         }
     }
 
@@ -85,28 +102,33 @@ public class TempChatRoomController {
             HttpSession session,
             RedirectAttributes redirAttrs,
             Model model) {
-        Sessiondata sessiondata;
-        sessiondata = (Sessiondata) session.getAttribute("loggedUser");
-        if (sessiondata == null) {
-            return "redirect:/login";
-        }
-        Optional<RiwayatPesanan> rOptional = riwayatPesananRepository.findById(Long.parseLong(idPesanan));
-        if (rOptional.isPresent()) {
-            RiwayatPesanan riwayatPesanan = rOptional.get();
-
-            if (riwayatPesanan.getTempChatRoom() == null) {
-                TempChatRoom tempChatRoom = new TempChatRoom(riwayatPesanan.getCustomer(),
-                        riwayatPesanan.getPenyediaJasa());
-                riwayatPesanan.setTempChatRoom(tempChatRoom);
-                riwayatPesananRepository.save(riwayatPesanan);
+        try {
+            Sessiondata sessiondata;
+            sessiondata = (Sessiondata) session.getAttribute("loggedUser");
+            if (sessiondata == null) {
+                return "redirect:/login";
             }
-            return "redirect:/dashboard/jasa/chat/" + riwayatPesanan.getId();
-        }
+            Optional<RiwayatPesanan> rOptional = riwayatPesananRepository.findById(Long.parseLong(idPesanan));
+            if (rOptional.isPresent()) {
+                RiwayatPesanan riwayatPesanan = rOptional.get();
 
-        if (sessiondata.getRole().equals("Customer")) {
-            return "redirect:/dashboard/riwayat";
-        } else {
-            return "redirect:/dashboard";
+                if (riwayatPesanan.getTempChatRoom() == null) {
+                    TempChatRoom tempChatRoom = new TempChatRoom(riwayatPesanan.getCustomer(),
+                            riwayatPesanan.getPenyediaJasa());
+                    riwayatPesanan.setTempChatRoom(tempChatRoom);
+                    riwayatPesananRepository.save(riwayatPesanan);
+                }
+                return "redirect:/dashboard/jasa/chat/" + riwayatPesanan.getId();
+            }
+
+            if (sessiondata.getRole().equals("Customer")) {
+                return "redirect:/dashboard/riwayat";
+            } else {
+                return "redirect:/dashboard";
+            }
+        } catch (Exception e) {
+            System.err.println(e);
+            return "redirect:/login";
         }
     }
 

@@ -54,55 +54,54 @@ public class RiwayatPesananController {
             HttpSession session,
             RedirectAttributes redirAttrs,
             Model model) {
-        
-        Sessiondata sessiondata = (Sessiondata) session.getAttribute("loggedUser");
-        if (sessiondata == null) {
-            return "redirect:/login";
-        }
-        Customer customer = (Customer) sessiondata.getUser();
-        
-        RiwayatPesanan sedangMemesan = riwayatPesananRepository.findBySedangMemesan(customer.getId());
-        if (sedangMemesan != null && !jenisJasa.equals("0")) {
-            redirAttrs.addFlashAttribute("message", "Ada pesanan yang sedang berjalan");
-            return "redirect:/dashboard/pesan_jasa/" + jenisJasa;
-        }
 
-        
-        Pembayaran pembayaran = new Pembayaran(harga * kuantitas);
+        try {
+            Sessiondata sessiondata = (Sessiondata) session.getAttribute("loggedUser");
+            if (sessiondata == null) {
+                return "redirect:/login";
+            }
+            Customer customer = (Customer) sessiondata.getUser();
 
-        
-        Optional<Voucher> voucherOptional = Optional.empty();
-        if (!idVoucher.equals("0")) {
-            voucherOptional = voucherRepository.findById(Long.parseLong(idVoucher));
-        }
-
-        if (voucherOptional.isPresent()) {
-            Voucher voucher = voucherOptional.get();
-
-            
-
-            
-            if (voucher.isStatusAktif()) {
-                voucher.setStatusAktif(false); 
-                voucherRepository.save(voucher); 
-
-                
-                pembayaran.setVoucher(voucher);
-            } else {
-                redirAttrs.addFlashAttribute("message", "Voucher sudah digunakan atau tidak aktif");
+            RiwayatPesanan sedangMemesan = riwayatPesananRepository.findBySedangMemesan(customer.getId());
+            if (sedangMemesan != null && !jenisJasa.equals("0")) {
+                redirAttrs.addFlashAttribute("message", "Ada pesanan yang sedang berjalan");
                 return "redirect:/dashboard/pesan_jasa/" + jenisJasa;
             }
+
+            Pembayaran pembayaran = new Pembayaran(harga * kuantitas);
+
+            Optional<Voucher> voucherOptional = Optional.empty();
+            if (!idVoucher.equals("0")) {
+                voucherOptional = voucherRepository.findById(Long.parseLong(idVoucher));
+            }
+
+            if (voucherOptional.isPresent()) {
+                Voucher voucher = voucherOptional.get();
+
+                if (voucher.isStatusAktif()) {
+                    voucher.setStatusAktif(false);
+                    voucherRepository.save(voucher);
+
+                    pembayaran.setVoucher(voucher);
+                } else {
+                    redirAttrs.addFlashAttribute("message", "Voucher sudah digunakan atau tidak aktif");
+                    return "redirect:/dashboard/pesan_jasa/" + jenisJasa;
+                }
+            }
+
+            pembayaranRepository.save(pembayaran);
+
+            RiwayatPesanan riwayatPesanan = new RiwayatPesanan(jenisJasa, 1, waktu, pembayaran, customer);
+
+            riwayatPesananRepository.save(riwayatPesanan);
+
+            Sessiondata newSessiondata = new Sessiondata(customer, "Customer");
+            session.setAttribute("loggedUser", newSessiondata);
+            return "redirect:/dashboard";
+        } catch (Exception e) {
+            System.err.println(e);
+            return "redirect:/login";
         }
-
-        pembayaranRepository.save(pembayaran);
-
-        RiwayatPesanan riwayatPesanan = new RiwayatPesanan(jenisJasa, 1, waktu, pembayaran, customer);
-
-        riwayatPesananRepository.save(riwayatPesanan);
-
-        Sessiondata newSessiondata = new Sessiondata(customer, "Customer");
-        session.setAttribute("loggedUser", newSessiondata);
-        return "redirect:/dashboard";
     }
 
     @PostMapping("/dashboard/batalkan_jasa")
@@ -111,22 +110,27 @@ public class RiwayatPesananController {
             HttpSession session,
             RedirectAttributes redirAttrs,
             Model model) {
-        Sessiondata sessiondata;
-        sessiondata = (Sessiondata) session.getAttribute("loggedUser");
-        if (sessiondata == null) {
-            return "redirect:/login";
-        }
-
-        Optional<RiwayatPesanan> pesanan = riwayatPesananRepository.findById(Long.parseLong(idPesanan));
-        if (pesanan.isPresent()) {
-            if(pesanan.get().getPenyediaJasa() != null){
-                redirAttrs.addFlashAttribute("message", "Pesanan telah diterima penyedia jasa");
-                return "redirect:/dashboard/riwayat";
+        try {
+            Sessiondata sessiondata;
+            sessiondata = (Sessiondata) session.getAttribute("loggedUser");
+            if (sessiondata == null) {
+                return "redirect:/login";
             }
-            pesanan.get().setStatus(11);
-            riwayatPesananRepository.save(pesanan.get());
+
+            Optional<RiwayatPesanan> pesanan = riwayatPesananRepository.findById(Long.parseLong(idPesanan));
+            if (pesanan.isPresent()) {
+                if (pesanan.get().getPenyediaJasa() != null) {
+                    redirAttrs.addFlashAttribute("message", "Pesanan telah diterima penyedia jasa");
+                    return "redirect:/dashboard/riwayat";
+                }
+                pesanan.get().setStatus(11);
+                riwayatPesananRepository.save(pesanan.get());
+            }
+            return "redirect:/dashboard/riwayat";
+        } catch (Exception e) {
+            System.out.println("Error batalkan jasa : " + e);
+            return "redirect:/dashboard/riwayat";
         }
-        return "redirect:/dashboard/riwayat";
     }
 
     @PostMapping("/dashboard/terima_jasa")
@@ -135,67 +139,85 @@ public class RiwayatPesananController {
             HttpSession session,
             RedirectAttributes redirAttrs,
             Model model) {
-        Sessiondata sessiondata;
-        sessiondata = (Sessiondata) session.getAttribute("loggedUser");
-        if (sessiondata == null) {
-            return "redirect:/login";
-        }
-        PenyediaJasa penyediaJasa = (PenyediaJasa) sessiondata.getUser();
+        try {
+            Sessiondata sessiondata;
+            sessiondata = (Sessiondata) session.getAttribute("loggedUser");
+            if (sessiondata == null) {
+                return "redirect:/login";
+            }
+            PenyediaJasa penyediaJasa = (PenyediaJasa) sessiondata.getUser();
 
-        Optional<RiwayatPesanan> pesanan = riwayatPesananRepository.findById(Long.parseLong(idPesanan));
-        if (pesanan.isPresent()) {
-            pesanan.get().setPenyediaJasa(penyediaJasa);
-            pesanan.get().setStatus(2);
-            penyediaJasa.setTersedia(false);
-            riwayatPesananRepository.save(pesanan.get());
-            penyediaJasaRepository.save(penyediaJasa);
+            Optional<RiwayatPesanan> pesanan = riwayatPesananRepository.findById(Long.parseLong(idPesanan));
+            if (pesanan.isPresent()) {
+                pesanan.get().setPenyediaJasa(penyediaJasa);
+                pesanan.get().setStatus(2);
+                penyediaJasa.setTersedia(false);
+                riwayatPesananRepository.save(pesanan.get());
+                penyediaJasaRepository.save(penyediaJasa);
 
-            Sessiondata newSessiondata = new Sessiondata(penyediaJasa, sessiondata.getRole());
-            session.setAttribute("loggedUser", newSessiondata);
+                Sessiondata newSessiondata = new Sessiondata(penyediaJasa, sessiondata.getRole());
+                session.setAttribute("loggedUser", newSessiondata);
+            }
+            return "redirect:/dashboard";
+        } catch (Exception e) {
+            System.out.println("Error terima jasa : " + e);
+            return "redirect:/dashboard";
         }
-        return "redirect:/dashboard";
     }
 
     @PostMapping("/dashboard/selesai_jasa")
-    public String selesaiJasa(
-            @RequestParam("riwayat") String idPesanan,
-            HttpSession session,
-            RedirectAttributes redirAttrs,
-            Model model) {
-        try {
-            Sessiondata sessiondata;
-        sessiondata = (Sessiondata) session.getAttribute("loggedUser");
+public String selesaiJasa(
+        @RequestParam("riwayat") String idPesanan,
+        HttpSession session,
+        RedirectAttributes redirAttrs,
+        Model model) {
+    try {
+        Sessiondata sessiondata = (Sessiondata) session.getAttribute("loggedUser");
         if (sessiondata == null) {
             return "redirect:/login";
         }
-        PenyediaJasa penyediaJasa = (PenyediaJasa) sessiondata.getUser();
+        // PenyediaJasa penyediaJasa = (PenyediaJasa) sessiondata.getUser();
 
         Optional<RiwayatPesanan> pesanan = riwayatPesananRepository.findById(Long.parseLong(idPesanan));
 
         if (pesanan.isPresent()) {
             RiwayatPesanan rPesanan = pesanan.get();
 
-            
-
-            rPesanan.setPenyediaJasa(penyediaJasa);
+            // rPesanan.setPenyediaJasa(penyediaJasa);
             rPesanan.setStatus(10);
-            //baru
+            if(rPesanan.getTempChatRoom() != null){
+                rPesanan.getTempChatRoom().setStatus(false);
+            }
+            rPesanan.getPenyediaJasa().setTersedia(true);
+            rPesanan.getPenyediaJasa().setTersedia(true);
 
-            rPesanan.getTempChatRoom().setStatus(false);
-            //baru
-            
-            penyediaJasa.setTersedia(true);
-            
+            // Log sebelum menyimpan
+            System.out.println("Sebelum menyimpan: Status jasa = " + rPesanan.getStatus());
+
+            // Simpan perubahan ke database
+            // penyediaJasaRepository.save(penyediaJasa);
             riwayatPesananRepository.save(rPesanan);
-            penyediaJasaRepository.save(penyediaJasa);
 
-            System.out.println("Error selesai jasa : " + rPesanan.getStatus());
+            // Log setelah menyimpan
+            System.out.println("Setelah menyimpan: Status jasa = " + rPesanan.getStatus());
+
+            // Verifikasi dari database
+            Optional<RiwayatPesanan> verifikasiPesanan = riwayatPesananRepository.findById(Long.parseLong(idPesanan));
+            if (verifikasiPesanan.isPresent()) {
+                System.out.println("Verifikasi dari database: Status jasa = " + verifikasiPesanan.get().getStatus());
+            } else {
+                System.out.println("Pesanan tidak ditemukan saat verifikasi.");
+            }
+        } else {
+            System.out.println("Pesanan dengan ID " + idPesanan + " tidak ditemukan.");
         }
-            return "redirect:/dashboard";    
-        } catch (Exception e) {
-            System.out.println("Error selesai jasa : " + e);
-            return "redirect:/dashboard";    
-        }
-        
+        return "redirect:/dashboard";
+    } catch (Exception e) {
+        System.out.println("Error selesai jasa: " + e.getMessage());
+        e.printStackTrace();
+        return "redirect:/dashboard";
     }
+}
+
+    
 }

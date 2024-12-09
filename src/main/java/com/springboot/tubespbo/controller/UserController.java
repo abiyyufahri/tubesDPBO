@@ -1,4 +1,5 @@
 package com.springboot.tubespbo.controller;
+
 import java.time.LocalDate;
 import java.util.Optional;
 
@@ -24,10 +25,10 @@ public class UserController {
 
     @Autowired
     private UserService userService;
-    
+
     @Autowired
     private CustomerRepository customerRepository;
-    
+
     @Autowired
     private PenyediaJasaRepository penyediaJasaRepository;
 
@@ -47,20 +48,26 @@ public class UserController {
             @RequestParam("tanggalLahir") @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate tanggalLahir,
             HttpSession session,
             Model model) {
+        try {
+            if (username.isEmpty() || email.isEmpty() || password.isEmpty()) {
+                redirAttrs.addFlashAttribute("message", "Email sudah terdaftar");
+                return "redirect:/register";
+            }
 
-        if (username.isEmpty() || email.isEmpty() || password.isEmpty()) {
-            redirAttrs.addFlashAttribute("message", "Email sudah terdaftar");
-            return "redirect:/register";
-        }
-
-        User isLoggedIn = userService.register(username, email, password, noTelpon, jenisKelamin, tanggalLahir, role);
-        if (isLoggedIn != null) {
-            Sessiondata sessiondata = new Sessiondata(isLoggedIn, isLoggedIn instanceof Customer? "Customer" : "Penyedia Jasa");
-            model.addAttribute("message", "Registration successful!");
-            session.setAttribute("loggedUser", sessiondata);
-            return "redirect:/dashboard";
-        } else {
-            redirAttrs.addFlashAttribute("message", "Email sudah ada atau password kurang dari 6 kata");
+            User isLoggedIn = userService.register(username, email, password, noTelpon, jenisKelamin, tanggalLahir,
+                    role);
+            if (isLoggedIn != null) {
+                Sessiondata sessiondata = new Sessiondata(isLoggedIn,
+                        isLoggedIn instanceof Customer ? "Customer" : "Penyedia Jasa");
+                model.addAttribute("message", "Registration successful!");
+                session.setAttribute("loggedUser", sessiondata);
+                return "redirect:/dashboard";
+            } else {
+                redirAttrs.addFlashAttribute("message", "Email sudah ada atau password kurang dari 6 kata");
+                return "redirect:/register";
+            }
+        } catch (Exception e) {
+            System.err.println(e);
             return "redirect:/register";
         }
     }
@@ -76,23 +83,29 @@ public class UserController {
             @RequestParam("password") String password,
             HttpSession session,
             RedirectAttributes redirAttrs,
-            Model model
-            ) {
-        User isLoggedIn = userService.login(email, password);
-        Sessiondata sessiondata;
-        if (isLoggedIn != null) {
-            if(isLoggedIn instanceof Customer){
-                Optional<Customer> data = customerRepository.findById(isLoggedIn.getId());
-                sessiondata = new Sessiondata(data.orElseThrow(() -> new RuntimeException("User id not found")),"Customer");
-                session.setAttribute("loggedUser", sessiondata);
-            }else{
-                Optional<PenyediaJasa> data = penyediaJasaRepository.findById(isLoggedIn.getId());
-                sessiondata = new Sessiondata(data.orElseThrow(() -> new RuntimeException("User id not found")),"Penyedia Jasa");
-                session.setAttribute("loggedUser", sessiondata);
+            Model model) {
+        try {
+            User isLoggedIn = userService.login(email, password);
+            Sessiondata sessiondata;
+            if (isLoggedIn != null) {
+                if (isLoggedIn instanceof Customer) {
+                    Optional<Customer> data = customerRepository.findById(isLoggedIn.getId());
+                    sessiondata = new Sessiondata(data.orElseThrow(() -> new RuntimeException("User id not found")),
+                            "Customer");
+                    session.setAttribute("loggedUser", sessiondata);
+                } else {
+                    Optional<PenyediaJasa> data = penyediaJasaRepository.findById(isLoggedIn.getId());
+                    sessiondata = new Sessiondata(data.orElseThrow(() -> new RuntimeException("User id not found")),
+                            "Penyedia Jasa");
+                    session.setAttribute("loggedUser", sessiondata);
+                }
+                return "redirect:/dashboard";
+            } else {
+                redirAttrs.addFlashAttribute("message", "Email atau password salah");
+                return "redirect:/login";
             }
-            return "redirect:/dashboard";
-        } else {
-            redirAttrs.addFlashAttribute("message", "Email atau password salah");
+        } catch (Exception e) {
+            System.err.println(e);
             return "redirect:/login";
         }
     }

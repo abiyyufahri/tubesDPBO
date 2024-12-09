@@ -32,22 +32,27 @@ public class ChatMessageController {
         @RequestParam("pesan") String pesan,
         HttpSession session
     ) {
-        if (session.getAttribute("loggedUser") == null) {
-            return "redirect:/login";
-        }
-
-        Sessiondata sessiondata = (Sessiondata) session.getAttribute("loggedUser");
-
-        Optional<TempChatRoom> tOption = tempChatRoomRepository.findById(Long.parseLong(id_chat_room));
-        if(tOption.isPresent()){
-            TempChatRoom tempChatRoom = tOption.get();
-            if(!tempChatRoom.isStatus()){
-                return "redirect:/dashboard";
+        try {
+            if (session.getAttribute("loggedUser") == null) {
+                return "redirect:/login";
             }
-            ChatMessage chatMessage = new ChatMessage(sessiondata.getUser(), pesan, tempChatRoom);
-            chatMessageRepository.save(chatMessage);
+    
+            Sessiondata sessiondata = (Sessiondata) session.getAttribute("loggedUser");
+    
+            Optional<TempChatRoom> tOption = tempChatRoomRepository.findById(Long.parseLong(id_chat_room));
+            if(tOption.isPresent()){
+                TempChatRoom tempChatRoom = tOption.get();
+                if(!tempChatRoom.isStatus()){
+                    return "redirect:/dashboard";
+                }
+                ChatMessage chatMessage = new ChatMessage(sessiondata.getUser(), pesan, tempChatRoom);
+                chatMessageRepository.save(chatMessage);
+            }
+    
+            return "redirect:/dashboard/jasa/chat/" + id_pesanan;
+        } catch (Exception e) {
+            System.err.println(e);            
+            return "redirect:/dashboard";
         }
-
-        return "redirect:/dashboard/jasa/chat/" + id_pesanan;
     }
 }

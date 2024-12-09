@@ -44,7 +44,7 @@ public abstract class User {
     }
 
     public User(String username, String password, String email, String noTelpon, 
-                String alamat, boolean isActive, LocalDate tanggalLahir) {
+                String jenisKelamin, boolean isActive, LocalDate tanggalLahir) {
         this.username = username;
         this.password = password;
         this.email = email;

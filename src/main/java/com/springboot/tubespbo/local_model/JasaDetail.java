@@ -1,5 +1,7 @@
 package com.springboot.tubespbo.local_model;
 
+import com.springboot.tubespbo.util.CurrencyConverter;
+
 public class JasaDetail {
     private int id;  
     private String idJenisJasa;  
@@ -51,10 +53,11 @@ public class JasaDetail {
         return id;
     }
 
-
-
-
     public String getIdJenisJasa() {
         return idJenisJasa;
+    }
+
+    public String formattedHarga(){
+        return CurrencyConverter.toIDR(harga);
     }
 }

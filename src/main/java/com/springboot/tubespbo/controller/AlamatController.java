@@ -27,23 +27,27 @@ public class AlamatController {
             @RequestParam("kodePos") String kodePos,
             @RequestParam("negara") String negara,
             HttpSession session) {
+        try{
+            Sessiondata sessiondata = (Sessiondata) session.getAttribute("loggedUser");
 
-        Sessiondata sessiondata = (Sessiondata) session.getAttribute("loggedUser");
-
-        if (sessiondata != null) {
-            Customer customer = (Customer) sessiondata.getUser();
-            if (customer != null) {
-                Alamat alamat = new Alamat(namaJalan, nomorRumah, kota, provinsi, kodePos, negara);
-                customer.setAlamat(alamat);
-                customerRepository.save(customer);
-                Sessiondata newSessiondata = new Sessiondata(customer, "Customer");
-                session.setAttribute("loggedUser", newSessiondata);
-            } else {
-                throw new RuntimeException("Customer not found");
+            if (sessiondata != null) {
+                Customer customer = (Customer) sessiondata.getUser();
+                if (customer != null) {
+                    Alamat alamat = new Alamat(namaJalan, nomorRumah, kota, provinsi, kodePos, negara);
+                    customer.setAlamat(alamat);
+                    customerRepository.save(customer);
+                    Sessiondata newSessiondata = new Sessiondata(customer, "Customer");
+                    session.setAttribute("loggedUser", newSessiondata);
+                } else {
+                    throw new RuntimeException("Customer not found");
+                }
             }
+    
+            return "redirect:/dashboard";
+        }catch(Exception e){
+            System.err.println(e);
+            return "redirect:/login";
         }
-
-        return "redirect:/dashboard";
     }
 
     

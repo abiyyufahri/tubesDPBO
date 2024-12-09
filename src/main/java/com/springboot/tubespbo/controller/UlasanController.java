@@ -19,7 +19,7 @@ import jakarta.servlet.http.HttpSession;
 
 @Controller
 public class UlasanController {
-    
+
     @Autowired
     RiwayatPesananRepository riwayatPesananRepository;
 
@@ -33,28 +33,33 @@ public class UlasanController {
             @RequestParam("komentar") String komentar,
             HttpSession session,
             RedirectAttributes redirAttrs,
-            Model model
-    ){
-        if (session.getAttribute("loggedUser") == null) {
-            return "redirect:/login";
-        }
-        Sessiondata sessiondata = (Sessiondata) session.getAttribute("loggedUser");
-        if(sessiondata.getRole() == "Penyedia Jasa"){
-            return "redirect:/dashboard"; 
-        }
+            Model model) {
+        try {
+            if (session.getAttribute("loggedUser") == null) {
+                return "redirect:/login";
+            }
+            Sessiondata sessiondata = (Sessiondata) session.getAttribute("loggedUser");
+            if (sessiondata.getRole() == "Penyedia Jasa") {
+                return "redirect:/dashboard";
+            }
 
-        Optional<RiwayatPesanan> riwayatPesanan = riwayatPesananRepository.findById(Long.parseLong(id_pesanan));
-        if(riwayatPesanan.isPresent()){
-            RiwayatPesanan rPesanan = riwayatPesanan.get();
-            Ulasan ulasan = new Ulasan(riwayatPesanan.get(),rating, komentar);
-            ulasanRepository.save(ulasan);
-            rPesanan.setUlasan(ulasan);
-            riwayatPesananRepository.save(rPesanan);
-        }else{
-            redirAttrs.addFlashAttribute("message", "Ulasan gagal dikirim");
+            Optional<RiwayatPesanan> riwayatPesanan = riwayatPesananRepository.findById(Long.parseLong(id_pesanan));
+            if (riwayatPesanan.isPresent()) {
+                RiwayatPesanan rPesanan = riwayatPesanan.get();
+                Ulasan ulasan = new Ulasan(riwayatPesanan.get(), rating, komentar);
+                ulasanRepository.save(ulasan);
+                rPesanan.setUlasan(ulasan);
+                riwayatPesananRepository.save(rPesanan);
+            } else {
+                redirAttrs.addFlashAttribute("message", "Ulasan gagal dikirim");
+                return "redirect:/dashboard/riwayat";
+            }
+
             return "redirect:/dashboard/riwayat";
-        }
 
-        return "redirect:/dashboard/riwayat";
+        } catch (Exception e) {
+            System.err.println(e);
+            return "redirect:/dashboard";
+        }
     }
 }

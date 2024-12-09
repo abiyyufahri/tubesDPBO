@@ -63,8 +63,4 @@ public class Ulasan {
     public LocalDateTime getCreatedAt() {
         return createdAt;
     }
-
-    
-
-
 }

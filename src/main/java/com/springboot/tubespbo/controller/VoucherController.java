@@ -37,40 +37,50 @@ public class VoucherController {
             HttpSession session,
             RedirectAttributes redirAttrs,
             Model model) {
-        Sessiondata sessiondata;
-        sessiondata = (Sessiondata) session.getAttribute("loggedUser");
-        if (sessiondata == null) {
+        try {
+            Sessiondata sessiondata;
+            sessiondata = (Sessiondata) session.getAttribute("loggedUser");
+            if (sessiondata == null) {
+                return "redirect:/login";
+            }
+            Customer customer = (Customer) sessiondata.getUser();
+            Voucher voucher = new Voucher(kode, potongan, kadaluarsa, customer);
+            voucherRepository.save(voucher);
+
+            Sessiondata newSessiondata = new Sessiondata(customer, "Customer");
+            session.setAttribute("loggedUser", newSessiondata);
+            return "redirect:/dashboard/voucher";
+        } catch (Exception e) {
+            System.err.println(e);
             return "redirect:/login";
         }
-        Customer customer = (Customer) sessiondata.getUser();
-        Voucher voucher = new Voucher(kode, potongan, kadaluarsa, customer);
-        voucherRepository.save(voucher);
-
-        Sessiondata newSessiondata = new Sessiondata(customer, "Customer");
-        session.setAttribute("loggedUser", newSessiondata);
-        return "redirect:/dashboard/voucher";
     }
 
-    @PostMapping("/dashboard/voucher/update_voucher")
-    public String updateVoucher(
-            @RequestParam("id") String id,
-            HttpSession session,
-            RedirectAttributes redirAttrs,
-            Model model) {
-        Sessiondata sessiondata;
-        sessiondata = (Sessiondata) session.getAttribute("loggedUser");
-        if (sessiondata == null) {
-            return "redirect:/login";
-        }
-        Customer customer = (Customer) sessiondata.getUser();
-        Voucher voucher = voucherRepository.findById(Long.parseLong(id)).get();
+    // @PostMapping("/dashboard/voucher/update_voucher")
+    // public String updateVoucher(
+    //         @RequestParam("id") String id,
+    //         HttpSession session,
+    //         RedirectAttributes redirAttrs,
+    //         Model model) {
+    //     try {
+    //         Sessiondata sessiondata;
+    //         sessiondata = (Sessiondata) session.getAttribute("loggedUser");
+    //         if (sessiondata == null) {
+    //             return "redirect:/login";
+    //         }
+    //         Customer customer = (Customer) sessiondata.getUser();
+    //         Voucher voucher = voucherRepository.findById(Long.parseLong(id)).get();
 
-        voucher.setKodeVoucher("kkkkk");
-        voucher.setStatusAktif(false);
-        voucherRepository.save(voucher);
+    //         voucher.setKodeVoucher("kkkkk");
+    //         voucher.setStatusAktif(false);
+    //         voucherRepository.save(voucher);
 
-        Sessiondata newSessiondata = new Sessiondata(customer, "Customer");
-        session.setAttribute("loggedUser", newSessiondata);
-        return "redirect:/dashboard/voucher";
-    }
+    //         Sessiondata newSessiondata = new Sessiondata(customer, "Customer");
+    //         session.setAttribute("loggedUser", newSessiondata);
+    //         return "redirect:/dashboard/voucher";
+    //     } catch (Exception e) {
+    //         System.err.println(e);
+    //         return "redirect:/login";
+    //     }
+    // }
 }

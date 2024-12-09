@@ -34,22 +34,27 @@ public class PenyediaJasaController {
     public String tambahKeahlian(@RequestParam("keahlian") String keahlian,
             HttpSession session,
             Model model) {
-                Sessiondata sessiondata = (Sessiondata) session.getAttribute("loggedUser");
-                
-                if (sessiondata == null) {
+                try {
+                    Sessiondata sessiondata = (Sessiondata) session.getAttribute("loggedUser");
+                    
+                    if (sessiondata == null) {
+                        return "redirect:/login";
+                    }
+                    
+                    PenyediaJasa penyediaJasa = (PenyediaJasa) sessiondata.getUser();
+
+                    if (penyediaJasa!=null && !keahlian.equals("0")) {
+                        penyediaJasa.setJenisKeahlian(keahlian);
+                        penyediaJasaRepository.save(penyediaJasa);
+                        Sessiondata newSessiondata = new Sessiondata(penyediaJasa, "Penyedia Jasa");
+                        session.setAttribute("loggedUser", newSessiondata);
+                    }
+
+                    return "redirect:/dashboard";   
+                } catch (Exception e) {
+                    System.err.println(e);
                     return "redirect:/login";
                 }
-                
-                PenyediaJasa penyediaJasa = (PenyediaJasa) sessiondata.getUser();
-
-                if (penyediaJasa!=null && !keahlian.equals("0")) {
-                    penyediaJasa.setJenisKeahlian(keahlian);
-                    penyediaJasaRepository.save(penyediaJasa);
-                    Sessiondata newSessiondata = new Sessiondata(penyediaJasa, "Penyedia Jasa");
-                    session.setAttribute("loggedUser", newSessiondata);
-                }
-
-                return "redirect:/dashboard";
         
     }
 }

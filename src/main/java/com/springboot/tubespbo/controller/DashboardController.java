@@ -41,125 +41,145 @@ public class DashboardController {
 
     @GetMapping("/dashboard")
     public String index(HttpSession session, Model model) {
-        if (session.getAttribute("loggedUser") == null) {
-            return "redirect:/login"; 
-        }
-        Sessiondata sessiondata = (Sessiondata) session.getAttribute("loggedUser");
-        
-        if (sessiondata.getRole() == "Customer") {
-            Optional<Customer> customer = customerRepository.findById(sessiondata.getUser().getId());
-            List<RiwayatPesanan> riwayatPesanans = null;
-            if (customer.isPresent()) {
-                riwayatPesanans = riwayatPesananRepository.findByCustomerIdAndStatus(customer.get().getId(), 1);
-                if (riwayatPesanans.isEmpty()) {
-                    riwayatPesanans = riwayatPesananRepository.findByCustomerIdAndStatus(customer.get().getId(), 2);
-                }
+        try {
+            if (session.getAttribute("loggedUser") == null) {
+                return "redirect:/login"; 
             }
-            model.addAttribute("pesananAktif", riwayatPesanans);
-            return "homeDashboard"; 
-        }else{
-            Optional<PenyediaJasa> penyediaJasa = penyediaJasaRepository.findById(sessiondata.getUser().getId());
+            Sessiondata sessiondata = (Sessiondata) session.getAttribute("loggedUser");
             
-            List<RiwayatPesanan> allPesanan = null;
-            RiwayatPesanan sedangDiambil = null;
-            if(penyediaJasa.isPresent()){
-                allPesanan = riwayatPesananRepository.findByJenisJasa(penyediaJasa.get().getJenisKeahlian());
-                sedangDiambil = riwayatPesananRepository.findBySedangDiambil(penyediaJasa.get().getJenisKeahlian(),penyediaJasa.get().getId());
-            }
-
-            model.addAttribute("sedangDiambil", sedangDiambil);
-            model.addAttribute("pesanan", allPesanan);
-            return "penyediaJasaDashboard";
+            if (sessiondata.getRole() == "Customer") {
+                Optional<Customer> customer = customerRepository.findById(sessiondata.getUser().getId());
+                List<RiwayatPesanan> riwayatPesanans = null;
+                if (customer.isPresent()) {
+                    riwayatPesanans = riwayatPesananRepository.findByCustomerIdAndStatus(customer.get().getId(), 1);
+                    if (riwayatPesanans.isEmpty()) {
+                        riwayatPesanans = riwayatPesananRepository.findByCustomerIdAndStatus(customer.get().getId(), 2);
+                    }
+                }
+                model.addAttribute("pesananAktif", riwayatPesanans);
+                return "homeDashboard"; 
+            }else{
+                Optional<PenyediaJasa> penyediaJasa = penyediaJasaRepository.findById(sessiondata.getUser().getId());
+                
+                List<RiwayatPesanan> allPesanan = null;
+                RiwayatPesanan sedangDiambil = null;
+                if(penyediaJasa.isPresent()){
+                    allPesanan = riwayatPesananRepository.findByJenisJasa(penyediaJasa.get().getJenisKeahlian());
+                    sedangDiambil = riwayatPesananRepository.findBySedangDiambil(penyediaJasa.get().getJenisKeahlian(),penyediaJasa.get().getId());
+                }
+    
+                model.addAttribute("sedangDiambil", sedangDiambil);
+                model.addAttribute("pesanan", allPesanan);
+                return "penyediaJasaDashboard";
+            }   
+        } catch (Exception e) {
+            System.err.println(e);
+            return "redirect:/login";
         }
 
     }
 
     @GetMapping("/dashboard/riwayat")
     public String riwayatPesanan(HttpSession session, Model model) {
-        Sessiondata sessiondata = (Sessiondata) session.getAttribute("loggedUser");
-        if (session.getAttribute("loggedUser") == null) {
-            return "redirect:/login"; 
-        }
-        List<RiwayatPesanan> riwayatPesanans = null;
-        
-        if("Customer".equals(sessiondata.getRole())){
-            Optional<Customer> customer = customerRepository.findById(sessiondata.getUser().getId());
-            if(customer.isPresent()){
-                riwayatPesanans = riwayatPesananRepository.findByCustomerId(customer.get().getId());
+        try {
+            Sessiondata sessiondata = (Sessiondata) session.getAttribute("loggedUser");
+            if (session.getAttribute("loggedUser") == null) {
+                return "redirect:/login"; 
             }
-        }
-        else if("Penyedia Jasa".equals(sessiondata.getRole())){
-            Optional<PenyediaJasa> penyediaJasa = penyediaJasaRepository.findById(sessiondata.getUser().getId());
-            if(penyediaJasa.isPresent()){
-                riwayatPesanans = riwayatPesananRepository.findByPenyediaJasaId(sessiondata.getUser().getId());
+            List<RiwayatPesanan> riwayatPesanans = null;
+            
+            if("Customer".equals(sessiondata.getRole())){
+                Optional<Customer> customer = customerRepository.findById(sessiondata.getUser().getId());
+                if(customer.isPresent()){
+                    riwayatPesanans = riwayatPesananRepository.findByCustomerId(customer.get().getId());
+                }
             }
+            else if("Penyedia Jasa".equals(sessiondata.getRole())){
+                Optional<PenyediaJasa> penyediaJasa = penyediaJasaRepository.findById(sessiondata.getUser().getId());
+                if(penyediaJasa.isPresent()){
+                    riwayatPesanans = riwayatPesananRepository.findByPenyediaJasaId(sessiondata.getUser().getId());
+                }
+            }
+            model.addAttribute("riwayatPesanan", riwayatPesanans);
+            riwayatPesanans.sort((d1, d2) -> d2.getCreatedAt().compareTo(d1.getCreatedAt()));
+            return "riwayatDashboard";    
+        } catch (Exception e) {
+            System.err.println(e);
+            return "redirect:/login";
         }
-        model.addAttribute("riwayatPesanan", riwayatPesanans);
-        riwayatPesanans.sort((d1, d2) -> d2.getCreatedAt().compareTo(d1.getCreatedAt()));
-        return "riwayatDashboard"; 
     }
 
     @GetMapping("/dashboard/voucher")
     public String voucher(HttpSession session, Model model) {
-        Sessiondata sessiondata = (Sessiondata) session.getAttribute("loggedUser");
-        if (session.getAttribute("loggedUser") == null) {
-            return "redirect:/login"; 
-        }
+        try {
+            Sessiondata sessiondata = (Sessiondata) session.getAttribute("loggedUser");
+            if (session.getAttribute("loggedUser") == null) {
+                return "redirect:/login"; 
+            }
 
-        if(sessiondata.getRole() == "Penyedia Jasa"){
-            return "redirect:/dashboard"; 
-        }
-        Optional<Customer> customer = customerRepository.findById(sessiondata.getUser().getId());
-        List<Voucher> voucher = null;
-        if(customer.isPresent()){
-            voucher = voucherRepository.findByCustomerId(customer.get().getId());
-        }
-        voucher.sort((d1, d2) -> d2.getCreatedAt().compareTo(d1.getCreatedAt()));
-        model.addAttribute("vouchers", voucher);
-        return "voucherDashboard"; 
+            if(sessiondata.getRole() == "Penyedia Jasa"){
+                return "redirect:/dashboard"; 
+            }
+            Optional<Customer> customer = customerRepository.findById(sessiondata.getUser().getId());
+            List<Voucher> voucher = null;
+            if(customer.isPresent()){
+                voucher = voucherRepository.findByCustomerId(customer.get().getId());
+            }
+            voucher.sort((d1, d2) -> d2.getCreatedAt().compareTo(d1.getCreatedAt()));
+            model.addAttribute("vouchers", voucher);
+            return "voucherDashboard";
+        } catch (Exception e) {
+            System.err.println(e);
+            return "redirect:/login";
+        } 
     }
 
 
     @GetMapping("/dashboard/pesan_jasa/{id}")
     public String pesanJasa(@PathVariable("id") int id, HttpSession session, Model model) {
-        if (session.getAttribute("loggedUser") == null) {
-            return "redirect:/login";
-        }
-        Sessiondata sessiondata = (Sessiondata) session.getAttribute("loggedUser");
-        if(sessiondata.getRole() == "Penyedia Jasa"){
-            return "redirect:/dashboard"; 
-        }
-
-        Optional<Customer> customer = customerRepository.findById(sessiondata.getUser().getId());
-        if(!customer.isPresent()){
-            return "redirect:/login";
-        }
-
-        if(customer.get().getAlamat() == null){
-            return "redirect:/dashboard";
-        }
-
-        List<Voucher> voucher;
-        voucher = voucherRepository.findByCustomerIdAndStatusAktif(customer.get().getId(),true);
-
-        Map<Integer, JasaDetail> jasaMap = Map.of(
-            1, new JasaDetail("1","Jasa Pembersih Ruangan", 100),
-            2, new JasaDetail("2","Jasa Cat Ruangan", 200),
-            3, new JasaDetail("3","Jasa Servis AC", 300),
-            4, new JasaDetail("4","Jasa Perbaiki TV", 400),
-            5, new JasaDetail("5","Jasa Perbaiki Perabot", 500),
-            6, new JasaDetail("6","Jasa Pemotong Rumput", 600)
-        );
-
+        try {
+            if (session.getAttribute("loggedUser") == null) {
+                return "redirect:/login";
+            }
+            Sessiondata sessiondata = (Sessiondata) session.getAttribute("loggedUser");
+            if(sessiondata.getRole() == "Penyedia Jasa"){
+                return "redirect:/dashboard"; 
+            }
     
-        JasaDetail jenisjasa = jasaMap.get(id);
-        if (jenisjasa == null) {
-            return "redirect:/dashboard";
+            Optional<Customer> customer = customerRepository.findById(sessiondata.getUser().getId());
+            if(!customer.isPresent()){
+                return "redirect:/login";
+            }
+    
+            if(customer.get().getAlamat() == null){
+                return "redirect:/dashboard";
+            }
+    
+            List<Voucher> voucher;
+            voucher = voucherRepository.findByCustomerIdAndStatusAktif(customer.get().getId(),true);
+    
+            Map<Integer, JasaDetail> jasaMap = Map.of(
+                1, new JasaDetail("1","Jasa Pembersih Ruangan", 10000),
+                2, new JasaDetail("2","Jasa Cat Ruangan", 20000),
+                3, new JasaDetail("3","Jasa Servis AC", 30000),
+                4, new JasaDetail("4","Jasa Perbaiki TV", 100000),
+                5, new JasaDetail("5","Jasa Perbaiki Perabot", 50000),
+                6, new JasaDetail("6","Jasa Pemotong Rumput", 25000)
+            );
+    
+        
+            JasaDetail jenisjasa = jasaMap.get(id);
+            if (jenisjasa == null) {
+                return "redirect:/dashboard";
+            }
+    
+            model.addAttribute("jenisjasa", jenisjasa);
+            model.addAttribute("voucher", voucher);
+            return "pesanJasaDashboard";   
+        } catch (Exception e) {
+            System.err.println(e);
+            return "redirect:/login";
         }
-
-        model.addAttribute("jenisjasa", jenisjasa);
-        model.addAttribute("voucher", voucher);
-        return "pesanJasaDashboard";
     }
 
 }

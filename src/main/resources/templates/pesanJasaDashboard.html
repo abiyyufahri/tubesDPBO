@@ -104,25 +104,25 @@
 
     <div class="pt-16 max-w-7xl mx-auto flex">
         <aside
-            class="z-[50] sidebar fixed lg:static w-[240px] bg-indigo-50 h-[calc(100vh-4rem)] lg:h-auto transform -translate-x-full lg:translate-x-0 transition-transform duration-300 z-45 overflow-y-auto p-4">
+            class="z-[40] sidebar fixed lg:static w-[240px] bg-indigo-50 h-[calc(100vh-4rem)] lg:h-auto transform -translate-x-full lg:translate-x-0 transition-transform duration-300 z-45 overflow-y-auto p-4">
             <div
                 class="bg-white rounded-xl shadow-lg mb-6 p-4 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
                 <a href="#"
-                    class="flex items-center text-gray-600 hover:text-indigo-800 py-4 transition-all duration-300 hover:translate-x-1">
+                    class="flex items-center text-indigo-800 py-4 transition-all duration-300 hover:translate-x-1">
                     <span class="material-icons-outlined mr-2">dashboard</span>
                     Home
                     <span class="material-icons-outlined ml-auto">keyboard_arrow_right</span>
                 </a>
-                <a href="#"
+                <a href="/dashboard/riwayat"
                     class="flex items-center text-gray-600 hover:text-indigo-800 py-4 transition-all duration-300 hover:translate-x-1">
-                    <span class="material-icons-outlined mr-2">tune</span>
-                    Some menu item
+                    <span class="material-icons-outlined mr-2">history</span>
+                    Riwayat pemesanan
                     <span class="material-icons-outlined ml-auto">keyboard_arrow_right</span>
                 </a>
-                <a href="#"
+                <a href="/dashboard/voucher"
                     class="flex items-center text-gray-600 hover:text-indigo-800 py-4 transition-all duration-300 hover:translate-x-1">
-                    <span class="material-icons-outlined mr-2">file_copy</span>
-                    Another menu item
+                    <span class="material-icons-outlined mr-2">label</span>
+                    Voucher
                     <span class="material-icons-outlined ml-auto">keyboard_arrow_right</span>
                 </a>
             </div>
@@ -257,7 +257,7 @@
                                     <div class="mt-6">
                                         <input hidden th:value="${jenisjasa.harga}" name="harga" type="number">
                                         <input hidden th:value="${jenisjasa.getIdJenisJasa()}" name="jenisJasa" type="text">
-                                        <p th:text="'Rp.' + ${jenisjasa.harga} + (${jenisjasa.id >= 3 && jenisjasa.id <= 5} ? ' / unit' : ' / meter kubik')"
+                                        <p th:text="${jenisjasa.formattedHarga()} + (${jenisjasa.id >= 3 && jenisjasa.id <= 5} ? ' / unit' : ' / meter kubik')"
                                             class="text-xl font-bold">
                                         </p>
                                         <label for="role" class="block text-sm font-medium text-gray-700">
