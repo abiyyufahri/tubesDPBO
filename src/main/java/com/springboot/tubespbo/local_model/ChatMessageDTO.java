@@ -10,7 +10,6 @@ public class ChatMessageDTO {
     private LocalDateTime createdAt;
     private PenggunaDTO pengguna;
 
-    // Constructor
     public ChatMessageDTO(ChatMessage chatMessage) {
         this.id = chatMessage.getId();
         this.isiPesan = chatMessage.getIsiPesan();

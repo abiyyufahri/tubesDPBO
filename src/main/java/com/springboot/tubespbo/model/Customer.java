@@ -15,7 +15,7 @@ import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "customer")
-public class Customer extends User {
+public class Customer extends User implements UserInterface {
     
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "alamat_id")
@@ -40,6 +40,7 @@ public class Customer extends User {
         this.alamat = alamat;
     }
 
+    @Override
     public void addRiwayatPesanan(RiwayatPesanan riwayatPesanan) {
         if (this.riwayatPesanan == null) {
             this.riwayatPesanan = new ArrayList<>();
@@ -53,7 +54,6 @@ public class Customer extends User {
         }
         this.vouchers.add(voucher);
     }
-
 
     public Alamat getAlamat() {
         return alamat;

@@ -41,15 +41,11 @@ public class AlamatController {
                 } else {
                     throw new RuntimeException("Customer not found");
                 }
-            }
-    
+            }    
             return "redirect:/dashboard";
         }catch(Exception e){
             System.err.println(e);
             return "redirect:/login";
         }
     }
-
-    
-
 }

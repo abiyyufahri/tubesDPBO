@@ -2,6 +2,7 @@ package com.springboot.tubespbo.model;
 
 import java.sql.Date;
 import java.time.LocalDate;
+import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -52,6 +53,8 @@ public abstract class User {
         this.isActive = isActive;
         this.tanggalLahir = tanggalLahir;
     }
+
+    abstract public List<RiwayatPesanan> getRiwayatPesanan();
 
     public Long getId() {
         return id;

@@ -15,5 +15,4 @@ public class Sessiondata {
     public String getRole() {
         return role;
     }
-    
 }

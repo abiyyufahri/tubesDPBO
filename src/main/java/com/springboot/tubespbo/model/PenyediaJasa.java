@@ -15,7 +15,7 @@ import jakarta.validation.constraints.NotNull;
 
 @Entity
 @Table(name = "penyedia_jasa")
-public class PenyediaJasa extends User {
+public class PenyediaJasa extends User implements UserInterface{
     
     private String jenisKeahlian;
     
@@ -55,9 +55,9 @@ public class PenyediaJasa extends User {
         return riwayatPesanan;
     }
 
+    @Override
     public void addRiwayatPesanan(RiwayatPesanan riwayatPesanan) {
         this.riwayatPesanan.add(riwayatPesanan);
     }
-
     
 }

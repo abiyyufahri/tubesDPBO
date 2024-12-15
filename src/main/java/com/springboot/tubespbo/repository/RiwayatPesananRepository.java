@@ -9,9 +9,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import com.springboot.tubespbo.model.RiwayatPesanan;
-import com.springboot.tubespbo.model.Voucher;
 
-import jakarta.transaction.Transactional;
 
 @Repository
 public interface RiwayatPesananRepository extends JpaRepository<RiwayatPesanan, Long> {
@@ -29,8 +27,6 @@ public interface RiwayatPesananRepository extends JpaRepository<RiwayatPesanan, 
 
     @Query(value = "SELECT * FROM riwayat_pesanan WHERE jenis_jasa = :jenis_jasa AND status = 1", nativeQuery = true)
     List<RiwayatPesanan> findByJenisJasa(@Param("jenis_jasa") String jenis_jasa);
-    
-
 
     // Pnyeida JAsa
     @Query(value = "SELECT * FROM riwayat_pesanan WHERE jenis_jasa = :jenis_jasa AND status = 2 AND id_penyedia_jasa = :id_penyedia_jasa", nativeQuery = true)
