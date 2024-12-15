@@ -72,6 +72,7 @@ public class TempChatRoomController {
 
             if (rOptional.isPresent()) {
                 riwayatPesanan = rOptional.get();
+                
                 if (!riwayatPesanan.getTempChatRoom().isStatus()) {
                     return "redirect:/dashboard";
                 }

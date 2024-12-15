@@ -1,6 +1,7 @@
 package com.springboot.tubespbo.controller;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,6 +52,16 @@ public class UserController {
         try {
             if (username.isEmpty() || email.isEmpty() || password.isEmpty()) {
                 redirAttrs.addFlashAttribute("message", "Email sudah terdaftar");
+                return "redirect:/register";
+            }
+
+            if (LocalDate.now().minusYears(18).isBefore(tanggalLahir)) {
+                redirAttrs.addFlashAttribute("message", "Anda harus berusia minimal 18 tahun");
+                return "redirect:/register";
+            }
+
+            if (tanggalLahir.isAfter(LocalDate.now())) {
+                redirAttrs.addFlashAttribute("message", "Tanggal lahir tidak valid");
                 return "redirect:/register";
             }
 

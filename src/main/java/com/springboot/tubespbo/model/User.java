@@ -21,7 +21,6 @@ public abstract class User {
 
     @NotBlank
     @Size(min = 3, max = 50)
-    @Column(unique = true)
     private String username;
 
     @NotBlank

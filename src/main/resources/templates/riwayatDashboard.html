@@ -83,11 +83,7 @@
                 Diservis
             </div>
             <div class="flex items-center space-x-2">
-                <span
-                    class="material-icons-outlined p-2 text-2xl cursor-pointer hover:text-indigo-800 transition-transform duration-300 hover:scale-110 hidden md:block">search</span>
-                <span
-                    class="material-icons-outlined p-2 text-2xl cursor-pointer hover:text-indigo-800 transition-transform duration-300 hover:scale-110 hidden md:block">notifications</span>
-                <img class="w-10 h-10 rounded-full transition-transform duration-300 hover:scale-110 object-cover"
+                    <img class="w-10 h-10 rounded-full transition-transform duration-300 hover:scale-110 object-cover"
                     src="https://i.pinimg.com/564x/de/0f/3d/de0f3d06d2c6dbf29a888cf78e4c0323.jpg" alt="Profile">
                 <div class="row">
                     <span class="p-2" th:text="${session.loggedUser.user.getUsername()}">
@@ -141,12 +137,12 @@
 
             <div
                 class="bg-white rounded-xl shadow-lg p-4 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
-                <a href="#"
+                <!-- <a href="#"
                     class="flex items-center text-gray-600 hover:text-indigo-800 py-4 transition-all duration-300 hover:translate-x-1">
                     <span class="material-icons-outlined mr-2">face</span>
                     Profile
                     <span class="material-icons-outlined ml-auto">keyboard_arrow_right</span>
-                </a>
+                </a> -->
                 <a th:href="@{/logout}"
                     class="flex items-center text-gray-600 hover:text-indigo-800 py-4 transition-all duration-300 hover:translate-x-1">
                     <span class="material-icons-outlined mr-2">power_settings_new</span>
@@ -177,7 +173,11 @@
                     <div class="mt-4">
                         <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
                             <div class="max-h-80 overflow-y-auto">
+                                <div th:if="${#lists.size(riwayatPesanan) < 1}">
+                                    Tidak ada riwayat pesanan
+                                </div>
                                 <table
+                                    th:if="${#lists.size(riwayatPesanan) >= 1}"
                                     class="w-full text-sm text-left rtl:text-right text-gray-500">
                                     <thead class="text-xs text-gray-700 uppercase bg-gray-50">
                                         <tr>
@@ -189,6 +189,9 @@
                                             </th>
                                             <th scope="col" class="px-6 py-3">
                                                 Biaya
+                                            </th>
+                                            <th scope="col" class="px-6 py-3">
+                                                Jenis pembayaran
                                             </th>
                                             <th scope="col" class="px-6 py-3">
                                                 Waktu jasa
@@ -220,6 +223,8 @@
                                                 </p>
                                             </td>
                                             <td th:text="${riwayat.getPembayaran().getJumlahInIDR()}" class="px-6 py-4">
+                                            </td>
+                                            <td th:text="${riwayat.getPembayaran().getJenisPembayaran()}" class="px-6 py-4">
                                             </td>
                                             <td th:text="${riwayat.formatWaktu()}" class="px-6 py-4">
                                             </td>
@@ -397,11 +402,11 @@
                                                                             class="block mb-2 text-sm font-medium text-gray-900">Komentar</label>
                                                                         <textarea id="description" name="komentar" rows="4"
                                                                             class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500"
-                                                                            placeholder="Write product description here"></textarea>
+                                                                            placeholder="Tuliskan komentar"></textarea>
                                                                     </div>
                                                                 </div>
                                                                 <button type="submit"
-                                                                    class="text-white inline-flex items-center bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center">
+                                                                    class="text-white inline-flex items-center bg-indigo-900 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center">
                                                                     Tambah ulasan
                                                                 </button>
                                                             </form>

@@ -34,10 +34,14 @@ public class Pembayaran {
     @OneToOne(cascade = CascadeType.ALL,mappedBy = "pembayaran", fetch = FetchType.EAGER)
     private RiwayatPesanan pesanan;
 
+    @NotNull
+    private String jenisPembayaran;
+
     public Pembayaran(){}
 
-    public Pembayaran(@NotNull int jumlah) {
+    public Pembayaran(@NotNull int jumlah,@NotNull String jenisPembayaran) {
         this.jumlah = jumlah;
+        this.jenisPembayaran = jenisPembayaran;
     }
 
     public Long getId() {
@@ -62,5 +66,8 @@ public class Pembayaran {
     public String getJumlahInIDR() {
         return CurrencyConverter.toIDR(getJumlah());
     }
-    
+
+    public String getJenisPembayaran() {
+        return jenisPembayaran;
+    }
 }

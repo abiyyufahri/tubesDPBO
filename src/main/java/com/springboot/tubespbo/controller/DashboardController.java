@@ -76,7 +76,6 @@ public class DashboardController {
             System.err.println(e);
             return "redirect:/login";
         }
-
     }
 
     @GetMapping("/dashboard/riwayat")
@@ -91,12 +90,18 @@ public class DashboardController {
             if("Customer".equals(sessiondata.getRole())){
                 Optional<Customer> customer = customerRepository.findById(sessiondata.getUser().getId());
                 if(customer.isPresent()){
+                    if(customer.get().getAlamat() == null){
+                        return "redirect:/dashboard";
+                    }   
                     riwayatPesanans = riwayatPesananRepository.findByCustomerId(customer.get().getId());
                 }
             }
             else if("Penyedia Jasa".equals(sessiondata.getRole())){
                 Optional<PenyediaJasa> penyediaJasa = penyediaJasaRepository.findById(sessiondata.getUser().getId());
                 if(penyediaJasa.isPresent()){
+                    if(penyediaJasa.get().getJenisKeahlian() == null){
+                        return "redirect:/dashboard";
+                    }
                     riwayatPesanans = riwayatPesananRepository.findByPenyediaJasaId(sessiondata.getUser().getId());
                 }
             }
@@ -123,6 +128,9 @@ public class DashboardController {
             Optional<Customer> customer = customerRepository.findById(sessiondata.getUser().getId());
             List<Voucher> voucher = null;
             if(customer.isPresent()){
+                if(customer.get().getAlamat() == null){
+                    return "redirect:/dashboard";
+                }
                 voucher = voucherRepository.findByCustomerId(customer.get().getId());
             }
             voucher.sort((d1, d2) -> d2.getCreatedAt().compareTo(d1.getCreatedAt()));
