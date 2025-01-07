@@ -36,6 +36,10 @@ public class ChatMessageController {
             if (session.getAttribute("loggedUser") == null) {
                 return "redirect:/login";
             }
+
+            if(pesan.trim().isEmpty()){
+                return "redirect:/dashboard/jasa/chat/" + id_pesanan;
+            }
     
             Sessiondata sessiondata = (Sessiondata) session.getAttribute("loggedUser");
     
