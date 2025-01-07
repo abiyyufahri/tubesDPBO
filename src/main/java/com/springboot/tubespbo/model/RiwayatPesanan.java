@@ -21,7 +21,7 @@ import jakarta.validation.constraints.NotNull;
 
 @Entity
 @Table(name = "riwayatPesanan")
-public class RiwayatPesanan {
+public class RiwayatPesanan implements IPesananType {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -112,22 +112,23 @@ public class RiwayatPesanan {
     }
 
     public String getNamaJenisJasa() {
-        if ("1".equals(this.jenisJasa)) {
-            return "Jasa Pembersih Ruangan";
-        } else if ("2".equals(this.jenisJasa)) {
-            return "Jasa Cat Ruangan";
-        } else if ("3".equals(this.jenisJasa)) {
-            return "Jasa Servis AC";
-        } else if ("4".equals(this.jenisJasa)) {
-            return "Jasa Perbaiki TV";
-        } else if ("5".equals(this.jenisJasa)) {
-            return "Jasa Perbaiki Perabot";
-        } else if ("6".equals(this.jenisJasa)) {
-            return "Jasa Pemotong Rumput";
-        } else {
-            return "Jenis Jasa Tidak Diketahui";
+        switch (this.jenisJasa) {
+            case "1":
+                return JASA_PEMBERSIH;
+            case "2":
+                return JASA_CAT;
+            case "3":
+                return JASA_SERVIS;
+            case "4":
+                return JASA_PERBAIKI_TV;
+            case "5":
+                return JASA_PERBAIKI_PERABOT;
+            case "6":
+                return JASA_PEMOTONG_RUMPUT;
+            default:
+                return "Jenis Jasa Tidak Diketahui";
         }
-    }
+    }    
 
     public void setId(Long id) {
         this.id = id;

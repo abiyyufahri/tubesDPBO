@@ -15,7 +15,7 @@ import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "customer")
-public class Customer extends User implements UserInterface {
+public class Customer extends User {
     
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "alamat_id")
@@ -40,14 +40,6 @@ public class Customer extends User implements UserInterface {
         this.alamat = alamat;
     }
 
-    @Override
-    public void addRiwayatPesanan(RiwayatPesanan riwayatPesanan) {
-        if (this.riwayatPesanan == null) {
-            this.riwayatPesanan = new ArrayList<>();
-        }
-        this.riwayatPesanan.add(riwayatPesanan);
-    }
-
     public void addVoucher(Voucher voucher) {
         if (this.vouchers == null) {
             this.vouchers = new ArrayList<>();
@@ -59,12 +51,28 @@ public class Customer extends User implements UserInterface {
         return alamat;
     }
 
-    public List<RiwayatPesanan> getRiwayatPesanan() {
-        return riwayatPesanan;
-    }
-
     public List<Voucher> getVouchers() {
         return vouchers;
+    }
+
+    // Polymorphism melalui interface IManageRiwayatPesanan
+
+    @Override
+    public void addRiwayatPesanan(RiwayatPesanan riwayatPesanan) {
+        if (this.riwayatPesanan == null) {
+            this.riwayatPesanan = new ArrayList<>();
+        }
+        this.riwayatPesanan.add(riwayatPesanan);
+    }
+
+    @Override
+    public void removeRiwayatPesanan(RiwayatPesanan riwayatPesanan){
+        this.riwayatPesanan.remove(riwayatPesanan);
+    }
+
+    @Override
+    public List<RiwayatPesanan> getRiwayatPesanan() {
+        return riwayatPesanan;
     }
     
 }

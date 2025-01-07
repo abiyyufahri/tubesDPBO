@@ -34,8 +34,15 @@ public class UserController {
     private PenyediaJasaRepository penyediaJasaRepository;
 
     @GetMapping("/register")
-    public String showRegisterPage() {
-        return "register";
+    public String showRegisterPage(
+        HttpSession session,
+        RedirectAttributes redirAttrs
+    ) {
+        if (session.getAttribute("loggedUser") != null) {
+            return "redirect:/dashboard"; 
+        }else{
+            return "register";
+        }
     }
 
     @PostMapping("/register")
@@ -84,8 +91,15 @@ public class UserController {
     }
 
     @GetMapping("/login")
-    public String showLoginPage() {
-        return "login";
+    public String showLoginPage(
+        HttpSession session,
+        RedirectAttributes redirAttrs
+    ) {
+        if (session.getAttribute("loggedUser") != null) {
+            return "redirect:/dashboard"; 
+        }else{
+            return "login";
+        }
     }
 
     @PostMapping("/login")

@@ -13,7 +13,7 @@ import jakarta.validation.constraints.Size;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-public abstract class User {
+public abstract class User implements IManagePesananUser {
     
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
