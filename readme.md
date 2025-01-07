@@ -28,6 +28,7 @@ Sebelum memulai, pastikan Anda telah menginstal:
 2. Buka terminal di direktori project
 3. Build project:
    Untuk Bash:
+   
    ```bash
    ./gradlew clean build
    ```
@@ -37,6 +38,7 @@ Sebelum memulai, pastikan Anda telah menginstal:
    ```
 4. Jalankan aplikasi:
    Untuk Bash:
+
    ```bash
    ./gradlew bootRun
    ```
