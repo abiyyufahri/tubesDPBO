@@ -6,7 +6,7 @@ Repository ini berisi aplikasi Spring Boot yang dikonfigurasi untuk bekerja deng
 
 Sebelum memulai, pastikan Anda telah menginstal:
 - Java JDK 17 atau versi lebih baru
-- Gradle 7.0 atau versi lebih baru
+- Gradle 8.0 atau versi lebih baru
 - XAMPP (untuk database MySQL)
 - IDE pilihan Anda (IntelliJ IDEA, Eclipse, atau VS Code) disarankan menggunakan VS Code dengan ekstensi Spring Boot Dashboard
 
